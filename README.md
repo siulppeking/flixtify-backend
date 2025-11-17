@@ -11,7 +11,7 @@ Backend de la aplicación Flixtify construido con Express y MongoDB.
 
 1. Clonar el repositorio:
 ```bash
-git clone <repository-url>
+git clone https://github.com/siulppeking/flixtify-backend.git
 cd flixtify-backend
 ```
 
@@ -49,27 +49,6 @@ Inicia el servidor en modo producción.
 
 - `npm run dev` - Inicia el servidor en modo desarrollo con nodemon
 - `npm start` - Inicia el servidor en modo producción
-- `npm test` - Ejecutar tests
-
-## Características
-
-- ✅ Express.js para el servidor
-- ✅ MongoDB con Mongoose para la base de datos
-- ✅ Morgan para logging HTTP
-- ✅ Nodemon para desarrollo con reinicio automático
-- ✅ Variables de entorno con dotenv
-
-## Estructura del proyecto
-
-```
-src/
-├── controllers/    # Controladores de rutas
-├── databases/      # Configuración de base de datos
-├── middlewares/    # Middlewares personalizados
-├── models/         # Modelos de Mongoose
-├── routers/        # Definición de rutas
-└── utils/          # Funciones utilitarias
-```
 
 ## Tecnologías
 
@@ -79,7 +58,3 @@ src/
 - [Morgan](https://github.com/expressjs/morgan) - HTTP request logger
 - [Nodemon](https://nodemon.io/) - Monitor de cambios para desarrollo
 - [dotenv](https://github.com/motdotla/dotenv) - Variables de entorno
-
-## Licencia
-
-ISC
