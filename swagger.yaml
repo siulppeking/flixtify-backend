@@ -1,0 +1,243 @@
+openapi: 3.0.0
+info:
+  title: Flixtify API (Gestión de Proyectos y Tareas)
+  version: 1.0.0
+  description: API RESTful para la gestión personal de proyectos y tareas, incluyendo un sistema robusto de autenticación, roles y 2FA.
+servers:
+  - url: http://localhost:3000/api
+    description: Servidor de Desarrollo Local
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  
+  schemas:
+    Login:
+      type: object
+      properties:
+        email: { type: string, example: "admin@flixtify.com" }
+        password: { type: string, example: "P4ssw0rd!" }
+        twoFAToken: { type: string, example: "123456", description: "Opcional. Requerido si el 2FA está activo para este usuario." }
+    
+    AuthResponse:
+      type: object
+      properties:
+        accessToken: { type: string, example: "eyJhbGciOiJIUzI1NiI..." }
+        refreshToken: { type: string, example: "eyJhbGciOiJIUzI1NiI..." }
+        user:
+          $ref: '#/components/schemas/User'
+    
+    User:
+      type: object
+      properties:
+        id: { type: string, example: "691a4cabe342d86a97d37d00" }
+        username: { type: string, example: "usuario_prueba" }
+        email: { type: string, example: "prueba@ejemplo.com" }
+        activeRole: { type: string, example: "ADMIN" }
+        roles:
+          type: array
+          items: { type: string }
+
+    Project:
+      type: object
+      properties:
+        id: { type: string, example: "60f2c41c6f9b1d0015f8a001" }
+        name: { type: string, example: "Proyecto V2 Backend" }
+        description: { type: string }
+        ownerId: { type: string, description: "ID del dueño (usuario actual)" }
+        dueDate: { type: string, format: date }
+        status: { type: string, enum: [Active, On Hold, Completed] }
+    
+    Task:
+      type: object
+      properties:
+        id: { type: string, example: "60f2c41c6f9b1d0015f8a002" }
+        title: { type: string, example: "Implementar validadores de Tarea" }
+        projectId: { type: string, description: "ID del proyecto contenedor" }
+        status: { type: string, enum: [To Do, In Progress, Done] }
+        priority: { type: string, enum: [Low, Medium, High] }
+        dueDate: { type: string, format: date }
+
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Autenticación
+      summary: Iniciar Sesión
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Inicio de sesión exitoso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Credenciales inválidas o token 2FA requerido.
+
+  /projects:
+    get:
+      tags:
+        - Proyectos
+      summary: Obtener todos los proyectos del usuario
+      description: Devuelve solo los proyectos donde el usuario autenticado es el ownerId.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lista de proyectos.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+    post:
+      tags:
+        - Proyectos
+      summary: Crear un nuevo proyecto
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string, example: "Documentación API" }
+                dueDate: { type: string, format: date }
+      responses:
+        '201':
+          description: Proyecto creado.
+        '401':
+          description: No autorizado.
+
+  /projects/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+        description: ID del proyecto.
+    get:
+      tags:
+        - Proyectos
+      summary: Obtener proyecto por ID.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Proyecto encontrado.
+        '404':
+          description: Proyecto no encontrado o acceso denegado.
+    put:
+      tags:
+        - Proyectos
+      summary: Actualizar proyecto.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Proyecto actualizado.
+    delete:
+      tags:
+        - Proyectos
+      summary: Eliminar proyecto (y tareas asociadas).
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Eliminado exitosamente.
+
+  /tasks:
+    get:
+      tags:
+        - Tareas
+      summary: Obtener todas las tareas del usuario.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lista de tareas.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+    post:
+      tags:
+        - Tareas
+      summary: Crear una nueva tarea.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [projectId, title]
+              properties:
+                projectId: { type: string, description: "Debe ser un proyecto del usuario." }
+                title: { type: string }
+                priority: { type: string, enum: [Low, Medium, High] }
+      responses:
+        '201':
+          description: Tarea creada.
+        '403':
+          description: ProjectId no pertenece al usuario.
+
+  /tasks/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+        description: ID de la tarea.
+    get:
+      tags:
+        - Tareas
+      summary: Obtener tarea por ID.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Tarea encontrada.
+        '404':
+          description: Tarea no encontrada o no pertenece al proyecto del usuario.
+    delete:
+      tags:
+        - Tareas
+      summary: Eliminar tarea.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Tarea eliminada.
+
+  /admin/users:
+    get:
+      tags:
+        - Administración (ADMIN)
+      summary: Listar todos los usuarios del sistema.
+      description: Requiere rol activo ADMIN.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lista de usuarios (excluye passwords y 2FA secret).
+        '403':
+          description: Acceso denegado (No es ADMIN).
