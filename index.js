@@ -31,7 +31,7 @@ connectDB();
 // Ruta raíz
 app.get("/", (req, res) => {
     res.status(200).json({
-        message: "Bienvenido a Flixtify Backend",
+        message: "Bienvenido a Flixtify Backend v1",
         status: "ok"
     });
 });
