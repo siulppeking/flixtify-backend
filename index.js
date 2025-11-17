@@ -27,6 +27,17 @@ app.use(cors());
 connectDB();
 
 // Routes
+
+// Ruta raíz
+app.get("/", (req, res) => {
+    res.status(200).json({
+        message: "Bienvenido a Flixtify Backend",
+        status: "ok"
+    });
+});
+
+// auth routes
+app.use("/api/auth", authRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/roles", roleRoutes);
 app.use("/api/menus", menuRoutes);
@@ -42,9 +53,9 @@ app.use("/api/tasks", taskRoutes);
 // --- Control Condicional de la Documentación Swagger ---
 if (process.env.NODE_ENV === 'development') { // <--- CLAVE DE CONTROL
     console.log('📝 Montando Swagger UI en /api-docs (Entorno de Desarrollo)');
-    
+
     // Ruta de Documentación SWAGGER/OPENAPI
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument)); 
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 } else {
     console.log('✅ Swagger UI deshabilitado en este entorno.');
 }
