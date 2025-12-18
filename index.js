@@ -3,66 +3,62 @@ const express = require('express');
 const morgan = require('morgan');
 const connectDB = require('./src/databases/connection');
 const cors = require('cors');
-const authRoutes = require("./src/routes/authRoutes");
-const roleRoutes = require("./src/routes/roleRoutes");
-const menuRoutes = require("./src/routes/menuRoutes");
-const roleMenuRoutes = require("./src/routes/roleMenuRoutes");
-const userRoleRoutes = require("./src/routes/userRoleRoutes");
-const projectRoutes = require("./src/routes/projectRoutes");
-const taskRoutes = require("./src/routes/taskRoutes");
-const userManagementRoutes = require("./src/routes/userManagementRoutes"); // Nueva línea
-const swaggerUi = require('swagger-ui-express'); // Importación 1
-const YAML = require('yamljs');                  // Importación 2
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
 
-const swaggerDocument = YAML.load('./swagger.yaml'); // Asegúrate de ajustar la ruta
+// Import routes
+const authRoutes = require('./src/routes/authRoutes');
+const roleRoutes = require('./src/routes/roleRoutes');
+const menuRoutes = require('./src/routes/menuRoutes');
+const roleMenuRoutes = require('./src/routes/roleMenuRoutes');
+const userRoleRoutes = require('./src/routes/userRoleRoutes');
+const projectRoutes = require('./src/routes/projectRoutes');
+const taskRoutes = require('./src/routes/taskRoutes');
+const userRoutes = require('./src/routes/userRoutes');
+const userManagementRoutes = require('./src/routes/userManagementRoutes');
+
+const swaggerDocument = YAML.load('./swagger.yaml');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// Middleware setup
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cors());
 
-// Conectar a MongoDB
+// Initialize database
 connectDB();
 
 // Routes
 
-// Ruta raíz
-app.get("/", (req, res) => {
-    res.status(200).json({
-        message: "Bienvenido a Flixtify Backend v1",
-        status: "ok"
-    });
+// Root endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: 'Bienvenido a Flixtify Backend v1',
+    status: 'ok'
+  });
 });
 
-// auth routes
-app.use("/api/auth", authRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/roles", roleRoutes);
-app.use("/api/menus", menuRoutes);
-app.use("/api/roleMenus", roleMenuRoutes);
-app.use("/api/userRoles", userRoleRoutes);
+// API routes
+app.use('/api/auth', authRoutes);
+app.use('/api/roles', roleRoutes);
+app.use('/api/menus', menuRoutes);
+app.use('/api/roleMenus', roleMenuRoutes);
+app.use('/api/userRoles', userRoleRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/admin/users', userManagementRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/tasks', taskRoutes);
 
-// Rutas de administración
-app.use("/api/admin/users", userManagementRoutes); // Nueva línea
-
-app.use("/api/projects", projectRoutes);
-app.use("/api/tasks", taskRoutes);
-
-// --- Control Condicional de la Documentación Swagger ---
-if (process.env.NODE_ENV === 'development') { // <--- CLAVE DE CONTROL
-    console.log('📝 Montando Swagger UI en /api-docs (Entorno de Desarrollo)');
-
-    // Ruta de Documentación SWAGGER/OPENAPI
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// Swagger documentation
+if (process.env.NODE_ENV === 'development') {
+  console.log('📝 Swagger UI mounted at /api-docs (Development)');
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 } else {
-    console.log('✅ Swagger UI deshabilitado en este entorno.');
+  console.log('✅ Swagger UI disabled in this environment.');
 }
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-// Iniciar servidor
+// Server startup
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor Express corriendo en puerto ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
