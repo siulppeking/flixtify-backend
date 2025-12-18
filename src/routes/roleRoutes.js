@@ -2,15 +2,15 @@ const express = require('express');
 const router = express.Router();
 const roleController = require('../controllers/roleController');
 const auth = require('../middlewares/authMiddleware');
-const checkAdmin = require('../middlewares/checkAdmin'); // Importar el nuevo middleware
+const checkAdmin = require('../middlewares/checkAdmin');
 
 router.route('/')
-    .get(roleController.getAllRoles) // Aplicar checkAdmin
-    .post(roleController.createRole); // Aplicar checkAdmin
+  .get(auth, checkAdmin, roleController.getAllRoles)
+  .post(auth, checkAdmin, roleController.createRole);
 
 router.route('/:id')
-    .get(roleController.getRoleById)
-    .put(roleController.updateRole)
-    .delete(roleController.deleteRole);
+  .get(auth, roleController.getRoleById)
+  .put(auth, checkAdmin, roleController.updateRole)
+  .delete(auth, checkAdmin, roleController.deleteRole);
 
 module.exports = router;

@@ -1,17 +1,16 @@
-// menuRoutes.js
 const express = require('express');
 const router = express.Router();
 const menuController = require('../controllers/menuController');
 const auth = require('../middlewares/authMiddleware');
-// const checkAdmin = require('../middlewares/adminMiddleware'); // Necesario para seguridad real
+const checkAdmin = require('../middlewares/checkAdmin');
 
 router.route('/')
-    .get( menuController.getAllMenus)     // auth, checkAdmin, ...
-    .post( menuController.createMenu);    // auth, checkAdmin, ...
+  .get(auth, menuController.getAllMenus)
+  .post(auth, checkAdmin, menuController.createMenu);
 
 router.route('/:id')
-    .get( menuController.getMenuById)     // auth, checkAdmin, ...
-    .put( menuController.updateMenu)      // auth, checkAdmin, ...
-    .delete( menuController.deleteMenu);  // auth, checkAdmin, ...
+  .get(auth, menuController.getMenuById)
+  .put(auth, checkAdmin, menuController.updateMenu)
+  .delete(auth, checkAdmin, menuController.deleteMenu);
 
 module.exports = router;
