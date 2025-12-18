@@ -1,103 +1,82 @@
-// authController.js
-// --------------------------------------------------------------------------------
-// NOTA: Asegúrate de que los archivos de los modelos (User, Role, UserRole, etc.) 
-// estén correctamente definidos con el esquema desacoplado y guardados en 
-// la carpeta "../models/".
-// --------------------------------------------------------------------------------
+const User = require('../models/User');
+const Role = require('../models/Role');
+const Token = require('../models/Token');
+const UserRole = require('../models/UserRole');
+const RoleMenu = require('../models/RoleMenu');
+const Menu = require('../models/Menu');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const speakeasy = require('speakeasy');
+const QRCode = require('qrcode');
 
-const User = require("../models/User");
-const Role = require("../models/Role");
-const Token = require("../models/Token");
-const UserRole = require("../models/UserRole"); // <-- Colección de enlace Usuario-Rol
-const RoleMenu = require("../models/RoleMenu"); // <-- Colección de enlace Rol-Menú
-const Menu = require("../models/Menu");
-
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const speakeasy = require("speakeasy");
-const QRCode = require("qrcode");
-
-// --- FUNCIONES DE AUTENTICACIÓN BÁSICA ---
-
-// Register: Crea usuario y le asigna el rol por defecto como ACTIVO
+// Register: Create user and assign default role
 exports.register = async (req, res) => {
-    try {
-        const { username, email, password } = req.body;
+  try {
+    const { username, email, password } = req.body;
 
-        const exists = await User.findOne({ email });
-        if (exists) return res.status(400).json({ message: "Email already exists" });
+    const exists = await User.findOne({ email });
+    if (exists) return res.status(400).json({ message: 'Email already exists' });
 
-        const hashed = await bcrypt.hash(password, 10);
+    const hashed = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      username,
+      email,
+      password: hashed
+    });
 
-        // 1. Crear el usuario
-        const user = await User.create({
-            username,
-            email,
-            password: hashed
-        });
-
-        // 2. Obtener el rol por defecto (Ej: "USER")
-        const defaultRole = await Role.findOne({ name: "USER" });
-
-        // 3. Crear el enlace UserRole y marcarlo como ACTIVO
-        if (defaultRole) {
-            await UserRole.create({
-                userId: user._id,
-                roleId: defaultRole._id,
-                isActive: true
-            });
-        }
-
-        res.status(201).json({ message: "User created", userId: user._id });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
+    const defaultRole = await Role.findOne({ name: 'USER' });
+    if (defaultRole) {
+      await UserRole.create({
+        userId: user._id,
+        roleId: defaultRole._id,
+        isActive: true
+      });
     }
+
+    res.status(201).json({ message: 'User created', userId: user._id });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
 
-// Login: Autentica, busca el rol ACTIVO y lo incluye en el JWT
+// Login: Authenticate and include active role in JWT
 exports.login = async (req, res) => {
-    try {
-        const { email, password, twoFAToken } = req.body;
+  try {
+    const { email, password, twoFAToken } = req.body;
 
-        // 1. Verificar usuario y contraseña
-        const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ message: "User not found" });
-        if (!user.enabled) return res.status(403).json({ message: "User disabled" });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user.enabled) return res.status(403).json({ message: 'User disabled' });
 
-        const match = await bcrypt.compare(password, user.password);
-        if (!match) return res.status(400).json({ message: "Invalid credentials" });
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(400).json({ message: 'Invalid credentials' });
 
-        // 2. Verificar 2FA
-        if (user.twoFA.enabled) {
-            if (!twoFAToken) return res.status(401).json({ message: "2FA token required" });
-            const verified = speakeasy.totp.verify({
-                secret: user.twoFA.secret,
-                encoding: "base32",
-                token: twoFAToken
-            });
-            if (!verified) return res.status(401).json({ message: "Invalid 2FA token" });
-        }
+    if (user.twoFA.enabled) {
+      if (!twoFAToken) return res.status(401).json({ message: '2FA token required' });
+      const verified = speakeasy.totp.verify({
+        secret: user.twoFA.secret,
+        encoding: 'base32',
+        token: twoFAToken
+      });
+      if (!verified) return res.status(401).json({ message: 'Invalid 2FA token' });
+    }
 
-        // 3. Obtener el Rol Activo
-        const activeUserRole = await UserRole.findOne({ userId: user._id, isActive: true }).populate('roleId');
+    const activeUserRole = await UserRole.findOne({ userId: user._id, isActive: true }).populate('roleId');
+    if (!activeUserRole) {
+      return res.status(403).json({ message: 'No active role assigned.' });
+    }
 
-        if (!activeUserRole) {
-            return res.status(403).json({ message: "No active role assigned." });
-        }
-
-        const activeRoleId = activeUserRole.roleId._id;
-
-        // 4. Generar Tokens (INCLUIR activeRoleId en el Access Token)
-        const accessToken = jwt.sign(
-            { id: user._id, activeRoleId: activeRoleId },
-            process.env.JWT_SECRET,
-            { expiresIn: "15m" }
-        );
-        const refreshToken = jwt.sign(
-            { id: user._id, activeRoleId: activeRoleId },
-            process.env.JWT_REFRESH_SECRET,
-            { expiresIn: "7d" }
+    const activeRoleId = activeUserRole.roleId._id;
+    const accessToken = jwt.sign(
+      { id: user._id, activeRoleId },
+      process.env.JWT_SECRET,
+      { expiresIn: '15m' }
+    );
+    const refreshToken = jwt.sign(
+      { id: user._id, activeRoleId },
+      process.env.JWT_REFRESH_SECRET,
+      { expiresIn: '7d' }
         );
 
         // 5. Guardar Refresh Token
