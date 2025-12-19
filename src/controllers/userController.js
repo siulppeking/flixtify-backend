@@ -1,103 +1,88 @@
-// controllers/userController.js
 const User = require('../models/User');
-const TwoFAMethod = require('../models/TwoFAMethod'); // Requerido para la lógica 2FA
-const bcrypt = require("bcryptjs");
-// const speakeasy = require('speakeasy'); // Debería instalarse para la lógica real de TOTP
+const TwoFAMethod = require('../models/TwoFAMethod');
+const bcrypt = require('bcryptjs');
 
-// --- Configuración ---
-// Campos a excluir de las respuestas de usuarios (sin password ni el estado de sesión 2FA)
 const USER_PROJECTION = '-password -twoFAVerifiedSession';
 
-// Función de ayuda para la autorización (Simplificada)
-// NOTA: Una implementación real debe verificar el rol (Admin) o la propiedad.
 const checkOwnerOrAdmin = (reqUserId, targetId) => {
-    return reqUserId.toString() === targetId.toString();
+  return reqUserId.toString() === targetId.toString();
 };
 
-// -------------------------------------------------------------------
-// --- Funciones CRUD de Usuario (Core) ---
-// -------------------------------------------------------------------
-
-// POST /api/users/register (CREATE)
 exports.createUser = async (req, res) => {
-    try {
-        const { username, email, password, userPreferences } = req.body;
+  try {
+    const { username, email, password, userPreferences } = req.body;
 
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: "El usuario con este correo ya existe." });
-        }
-
-        // La contraseña se hashea automáticamente mediante el hook pre-save del modelo User.
-        const newUser = await User.create({
-            username: username,
-            email,
-            password,
-            userPreferences
-        });
-
-        // Respuesta sin la contraseña hasheada.
-        const userResponse = newUser.toObject();
-        delete userResponse.password;
-
-        res.status(201).json({
-            message: "Usuario registrado con éxito.",
-            user: userResponse
-        });
-    } catch (error) {
-        if (error.code === 11000) {
-            return res.status(400).json({ message: "Nombre de usuario o correo ya en uso." });
-        }
-        console.error("Error creando usuario:", error);
-        res.status(500).json({ message: "Error del servidor al crear usuario." });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User with this email already exists' });
     }
+
+    const newUser = await User.create({
+      username,
+      email,
+      password,
+      userPreferences
+    });
+
+    const userResponse = newUser.toObject();
+    delete userResponse.password;
+
+    res.status(201).json({
+      message: 'User registered successfully',
+      user: userResponse
+    });
+  } catch (error) {
+    if (error.code === 11000) {
+      return res.status(400).json({ message: 'Username or email already in use' });
+    }
+    console.error('Error creating user:', error);
+    res.status(500).json({ message: 'Server error creating user' });
+  }
 };
 
-// GET /api/users (READ All - Admin Only)
 exports.getAllUsers = async (req, res) => {
-    try {
-        const users = await User.find({ deleted: false }).select(USER_PROJECTION).sort({ createdAt: 1 });
-        res.json(users);
-    } catch (error) {
-        console.error("Error obteniendo usuarios:", error);
-        res.status(500).json({ message: "Error del servidor al obtener usuarios." });
-    }
+  try {
+    const users = await User.find({ deleted: false })
+      .select(USER_PROJECTION)
+      .sort({ createdAt: 1 });
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ message: 'Server error fetching users' });
+  }
 };
 
-// GET /api/users/:id (READ One)
 exports.getUserById = async (req, res) => {
-    try {
-        const userId = req.params.id;
-        const requestingUserId = req.user.id;
+  try {
+    const userId = req.params.id;
+    const requestingUserId = req.user.id;
 
-        const user = await User.findOne({ _id: userId, deleted: false }).select(USER_PROJECTION);
+    const user = await User.findOne({ _id: userId, deleted: false })
+      .select(USER_PROJECTION);
 
-        if (!user) {
-            return res.status(404).json({ message: "Usuario no encontrado o eliminado." });
-        }
-
-        // Autorización (solo dueño o Admin)
-        if (!checkOwnerOrAdmin(requestingUserId, userId)) {
-            return res.status(403).json({ message: "Acceso denegado." });
-        }
-
-        res.json(user);
-    } catch (error) {
-        console.error("Error obteniendo usuario:", error);
-        res.status(500).json({ message: "Error del servidor al obtener usuario." });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found or deleted' });
     }
+
+    if (!checkOwnerOrAdmin(requestingUserId, userId)) {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ message: 'Server error fetching user' });
+  }
 };
 
-// PUT /api/users/:id (UPDATE)
 exports.updateUser = async (req, res) => {
-    try {
-        const userId = req.params.id;
-        const requestingUserId = req.user.id;
-        const updates = req.body;
+  try {
+    const userId = req.params.id;
+    const requestingUserId = req.user.id;
+    const updates = req.body;
 
-        // Autorización
-        if (!checkOwnerOrAdmin(requestingUserId, userId)) {
-            return res.status(403).json({ message: "Acceso denegado para actualizar este perfil." });
+    if (!checkOwnerOrAdmin(requestingUserId, userId)) {
+      return res.status(403).json({ message: 'Access denied to update this profile' });
         }
 
         // 1. Evitar que se actualicen campos sensibles directamente
