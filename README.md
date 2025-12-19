@@ -1,11 +1,19 @@
 # Flixtify Backend
 
-Backend de la aplicación Flixtify construido con Express y MongoDB.
+Backend API de la aplicación Flixtify construido con Express, MongoDB y Node.js.
+
+## Características
+
+- Autenticación JWT con tokens refresh
+- Autenticación de dos factores (2FA)
+- Gestión de roles y permisos
+- Gestión de proyectos y tareas
+- API REST completamente documentada con Swagger
 
 ## Requisitos
 
-- Node.js v16+
-- MongoDB Atlas cuenta
+- Node.js v16 o superior
+- MongoDB Atlas cuenta activa
 
 ## Instalación
 
