@@ -1,53 +1,45 @@
-const User = require("../models/User");
-const UserRole = require("../models/UserRole");
-const Role = require("../models/Role"); // Necesario para buscar el rol 'ADMIN' si es necesario
+const User = require('../models/User');
+const UserRole = require('../models/UserRole');
+const Role = require('../models/Role');
 
-// --- Función Auxiliar: Obtener roles asignados a un usuario ---
 const getAssignedRoles = async (userId) => {
-    const userAssignments = await UserRole.find({ userId }).populate('roleId', 'name');
-    return userAssignments.map(assignment => ({
-        id: assignment.roleId._id,
-        name: assignment.roleId.name,
-        isActive: assignment.isActive
-    }));
+  const userAssignments = await UserRole.find({ userId }).populate('roleId', 'name');
+  return userAssignments.map(assignment => ({
+    id: assignment.roleId._id,
+    name: assignment.roleId.name,
+    isActive: assignment.isActive
+  }));
 };
 
-// --- READ All Users (Solo para Admin) ---
-// GET /admin/users
 exports.getAllUsers = async (req, res) => {
-    try {
-        // Excluir información sensible como la contraseña y el secreto 2FA
-        const users = await User.find().select('-password -twoFA.secret');
+  try {
+    const users = await User.find().select('-password -twoFA.secret');
 
-        // Opcional: Adjuntar los roles de cada usuario para la interfaz de administración
-        const usersWithRoles = await Promise.all(users.map(async (user) => {
-            const roles = await getAssignedRoles(user._id);
-            return {
-                ...user.toObject(),
-                roles: roles
-            };
-        }));
+    const usersWithRoles = await Promise.all(users.map(async (user) => {
+      const roles = await getAssignedRoles(user._id);
+      return {
+        ...user.toObject(),
+        roles
+      };
+    }));
 
-        res.json(usersWithRoles);
-    } catch (error) {
-        console.error("Error fetching all users:", error);
-        res.status(500).json({ message: "Server error fetching users." });
-    }
+    res.json(usersWithRoles);
+  } catch (error) {
+    console.error('Error fetching all users:', error);
+    res.status(500).json({ message: 'Server error fetching users' });
+  }
 };
 
-// --- READ One User by ID (Solo para Admin) ---
-// GET /admin/users/:id
 exports.getUserById = async (req, res) => {
-    try {
-        const userId = req.params.id;
+  try {
+    const userId = req.params.id;
 
-        const user = await User.findById(userId).select('-password -twoFA.secret');
-        if (!user) {
-            return res.status(404).json({ message: "User not found." });
-        }
+    const user = await User.findById(userId).select('-password -twoFA.secret');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
-        // Adjuntar los roles
-        const roles = await getAssignedRoles(userId);
+    const roles = await getAssignedRoles(userId);
 
         res.json({
             ...user.toObject(),
