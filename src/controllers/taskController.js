@@ -1,80 +1,68 @@
-const Task = require("../models/Task");
-const Project = require("../models/Project");
+const Task = require('../models/Task');
+const Project = require('../models/Project');
 
-// --- Función Auxiliar para verificar Propiedad del Proyecto ---
-// Verifica que la tarea exista y que pertenezca a un proyecto del usuario autenticado (ownerId).
 const checkTaskOwnership = async (taskId, ownerId) => {
-    try {
-        // Buscamos la tarea y hacemos populate en projectId para obtener el ownerId del proyecto
-        const task = await Task.findById(taskId).populate({
-            path: 'projectId',
-            select: 'ownerId' // Solo necesitamos el ownerId del proyecto para la verificación
-        });
+  try {
+    const task = await Task.findById(taskId).populate({
+      path: 'projectId',
+      select: 'ownerId'
+    });
 
-        if (!task || !task.projectId) return null;
+    if (!task || !task.projectId) return null;
 
-        // CLAVE DE SEGURIDAD: Verificar que el dueño del proyecto sea el usuario autenticado
-        if (task.projectId.ownerId.toString() !== ownerId.toString()) {
-            return null; // Acceso denegado
-        }
-        return task;
-    } catch (error) {
-        // En caso de error de ID inválido o de servidor
-        return null;
+    if (task.projectId.ownerId.toString() !== ownerId.toString()) {
+      return null;
     }
+    return task;
+  } catch (error) {
+    return null;
+  }
 };
 
-// --- CREATE Task ---
 exports.createTask = async (req, res) => {
-    try {
-        const ownerId = req.user.id;
-        // Ya no se necesita assignedTo
-        const { projectId, title, description, priority, status, dueDate } = req.body;
+  try {
+    const ownerId = req.user.id;
+    const { projectId, title, description, priority, status, dueDate } = req.body;
 
-        // 1. Verificar que el proyecto exista y pertenezca al dueño (SEGURIDAD)
-        const project = await Project.findOne({ _id: projectId, ownerId });
-        if (!project) {
-            return res.status(403).json({ message: "Project not found or access denied to create task." });
-        }
-
-        const newTask = await Task.create({
-            projectId,
-            title,
-            description,
-            priority,
-            status,
-            dueDate
-        });
-        res.status(201).json({
-            message: "Task created successfully.",
-            task: newTask
-        });
-    } catch (error) {
-        console.error("Error creating task:", error);
-        res.status(500).json({ message: "Server error creating task." });
+    const project = await Project.findOne({ _id: projectId, ownerId });
+    if (!project) {
+      return res.status(403).json({ message: 'Project not found or access denied' });
     }
+
+    const newTask = await Task.create({
+      projectId,
+      title,
+      description,
+      priority,
+      status,
+      dueDate
+    });
+    res.status(201).json({
+      message: 'Task created successfully',
+      task: newTask
+    });
+  } catch (error) {
+    console.error('Error creating task:', error);
+    res.status(500).json({ message: 'Server error creating task' });
+  }
 };
 
-// --- READ All Tasks (Solo tareas de sus proyectos) ---
 exports.getAllTasks = async (req, res) => {
-    try {
-        const ownerId = req.user.id;
+  try {
+    const ownerId = req.user.id;
 
-        // 1. Obtener todos los IDs de proyectos que el usuario posee
-        const userProjects = await Project.find({ ownerId }).select('_id');
-        const projectIds = userProjects.map(p => p._id);
+    const userProjects = await Project.find({ ownerId }).select('_id');
+    const projectIds = userProjects.map(p => p._id);
 
-        // 2. Obtener solo las tareas vinculadas a esos proyectos
-        const tasks = await Task.find({ projectId: { $in: projectIds } })
-            // Hacemos populate para mostrar el nombre del proyecto en el frontend
-            .populate('projectId', 'name')
-            .sort({ dueDate: 1 });
+    const tasks = await Task.find({ projectId: { $in: projectIds } })
+      .populate('projectId', 'name')
+      .sort({ dueDate: 1 });
 
-        res.json(tasks);
-    } catch (error) {
-        console.error("Error fetching tasks:", error);
-        res.status(500).json({ message: "Server error fetching tasks." });
-    }
+    res.json(tasks);
+  } catch (error) {
+    console.error('Error fetching tasks:', error);
+    res.status(500).json({ message: 'Server error fetching tasks' });
+  }
 };
 
 // --- READ One Task (Verifica dueño del proyecto) ---
