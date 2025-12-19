@@ -1,81 +1,76 @@
-const Role = require("../models/Role");
-// Importamos los modelos de enlace para manejar las dependencias
-const UserRole = require("../models/UserRole");
-const RoleMenu = require("../models/RoleMenu");
+const Role = require('../models/Role');
+const UserRole = require('../models/UserRole');
+const RoleMenu = require('../models/RoleMenu');
 
-// --- Función 1: Obtener todos los roles (Read All) ---
 exports.getAllRoles = async (req, res) => {
-    try {
-        const roles = await Role.find({});
-        res.json(roles);
-    } catch (error) {
-        console.error("Error fetching roles:", error);
-        res.status(500).json({ message: "Server error fetching roles." });
-    }
+  try {
+    const roles = await Role.find({});
+    res.json(roles);
+  } catch (error) {
+    console.error('Error fetching roles:', error);
+    res.status(500).json({ message: 'Server error fetching roles' });
+  }
 };
 
-// --- Función 2: Obtener un rol por ID (Read One) ---
 exports.getRoleById = async (req, res) => {
-    try {
-        const role = await Role.findById(req.params.id);
-        if (!role) {
-            return res.status(404).json({ message: "Role not found." });
-        }
-        res.json(role);
-    } catch (error) {
-        console.error("Error fetching role:", error);
-        res.status(500).json({ message: "Server error fetching role." });
+  try {
+    const role = await Role.findById(req.params.id);
+    if (!role) {
+      return res.status(404).json({ message: 'Role not found' });
     }
+    res.json(role);
+  } catch (error) {
+    console.error('Error fetching role:', error);
+    res.status(500).json({ message: 'Server error fetching role' });
+  }
 };
 
-// --- Función 3: Crear un nuevo rol (Create) ---
 exports.createRole = async (req, res) => {
-    try {
-        const { name, description } = req.body;
+  try {
+    const { name, description } = req.body;
 
-        if (!name) {
-            return res.status(400).json({ message: "Role name is required." });
-        }
-
-        const existingRole = await Role.findOne({ name });
-        if (existingRole) {
-            return res.status(400).json({ message: "A role with this name already exists." });
-        }
-
-        const newRole = await Role.create({ name, description });
-        res.status(201).json({
-            message: "Role created successfully.",
-            role: newRole
-        });
-    } catch (error) {
-        console.error("Error creating role:", error);
-        res.status(500).json({ message: "Server error creating role." });
+    if (!name) {
+      return res.status(400).json({ message: 'Role name is required' });
     }
+
+    const existingRole = await Role.findOne({ name });
+    if (existingRole) {
+      return res.status(400).json({ message: 'A role with this name already exists' });
+    }
+
+    const newRole = await Role.create({ name, description });
+    res.status(201).json({
+      message: 'Role created successfully',
+      role: newRole
+    });
+  } catch (error) {
+    console.error('Error creating role:', error);
+    res.status(500).json({ message: 'Server error creating role' });
+  }
 };
 
-// --- Función 4: Actualizar un rol (Update) ---
 exports.updateRole = async (req, res) => {
-    try {
-        const { name, description } = req.body;
+  try {
+    const { name, description } = req.body;
 
-        const updatedRole = await Role.findByIdAndUpdate(
-            req.params.id,
-            { name, description },
-            { new: true, runValidators: true } // 'new: true' devuelve el doc actualizado
-        );
+    const updatedRole = await Role.findByIdAndUpdate(
+      req.params.id,
+      { name, description },
+      { new: true, runValidators: true }
+    );
 
-        if (!updatedRole) {
-            return res.status(404).json({ message: "Role not found for update." });
-        }
-
-        res.json({
-            message: "Role updated successfully.",
-            role: updatedRole
-        });
-    } catch (error) {
-        console.error("Error updating role:", error);
-        res.status(500).json({ message: "Server error updating role." });
+    if (!updatedRole) {
+      return res.status(404).json({ message: 'Role not found for update' });
     }
+
+    res.json({
+      message: 'Role updated successfully',
+      role: updatedRole
+    });
+  } catch (error) {
+    console.error('Error updating role:', error);
+    res.status(500).json({ message: 'Server error updating role' });
+  }
 };
 
 // --- Función 5: Eliminar un rol (Delete) ---

@@ -1,83 +1,74 @@
-const Menu = require("../models/Menu");
-const RoleMenu = require("../models/RoleMenu"); // Importamos el modelo de enlace
+const Menu = require('../models/Menu');
+const RoleMenu = require('../models/RoleMenu');
 
-// --- Función 1: Obtener todos los Menús (Read All) ---
-// Retorna la lista de menús, idealmente estructurada en el frontend
 exports.getAllMenus = async (req, res) => {
-    try {
-        // Obtenemos todos los menús y los ordenamos por un criterio (ej: nombre)
-        const menus = await Menu.find({}).sort({ name: 1 });
-        res.json(menus);
-    } catch (error) {
-        console.error("Error fetching menus:", error);
-        res.status(500).json({ message: "Server error fetching menus." });
-    }
+  try {
+    const menus = await Menu.find({}).sort({ name: 1 });
+    res.json(menus);
+  } catch (error) {
+    console.error('Error fetching menus:', error);
+    res.status(500).json({ message: 'Server error fetching menus' });
+  }
 };
 
-// --- Función 2: Obtener un menú por ID (Read One) ---
 exports.getMenuById = async (req, res) => {
-    try {
-        const menu = await Menu.findById(req.params.id);
-        if (!menu) {
-            return res.status(404).json({ message: "Menu item not found." });
-        }
-        res.json(menu);
-    } catch (error) {
-        console.error("Error fetching menu:", error);
-        res.status(500).json({ message: "Server error fetching menu." });
+  try {
+    const menu = await Menu.findById(req.params.id);
+    if (!menu) {
+      return res.status(404).json({ message: 'Menu item not found' });
     }
+    res.json(menu);
+  } catch (error) {
+    console.error('Error fetching menu:', error);
+    res.status(500).json({ message: 'Server error fetching menu' });
+  }
 };
 
-// --- Función 3: Crear un nuevo Menú (Create) ---
 exports.createMenu = async (req, res) => {
-    try {
-        const { name, icon, path, type, parent } = req.body;
+  try {
+    const { name, icon, path, type, parent } = req.body;
 
-        if (!name || !path || !type) {
-            return res.status(400).json({ message: "Name, path, and type are required fields." });
-        }
-
-        // 1. Validar el tipo de menú
-        if (!['menu', 'submenu', 'form'].includes(type)) {
-            return res.status(400).json({ message: "Invalid menu type. Must be 'menu', 'submenu', or 'form'." });
-        }
-
-        // 2. Verificar si el 'parent' (si se proporciona) existe
-        if (parent) {
-            const parentMenu = await Menu.findById(parent);
-            if (!parentMenu) {
-                return res.status(404).json({ message: "Parent menu not found." });
-            }
-        }
-
-        const newMenu = await Menu.create({
-            name,
-            icon,
-            path,
-            type,
-            parent: parent || null
-        });
-
-        res.status(201).json({
-            message: "Menu item created successfully.",
-            menu: newMenu
-        });
-    } catch (error) {
-        // Manejar errores de unique path
-        if (error.code === 11000) {
-            return res.status(400).json({ message: "Path must be unique." });
-        }
-        console.error("Error creating menu:", error);
-        res.status(500).json({ message: "Server error creating menu." });
+    if (!name || !path || !type) {
+      return res.status(400).json({ message: 'Name, path, and type are required' });
     }
+
+    if (!['menu', 'submenu', 'form'].includes(type)) {
+      return res.status(400).json({ message: "Invalid menu type. Must be 'menu', 'submenu', or 'form'" });
+    }
+
+    if (parent) {
+      const parentMenu = await Menu.findById(parent);
+      if (!parentMenu) {
+        return res.status(404).json({ message: 'Parent menu not found' });
+      }
+    }
+
+    const newMenu = await Menu.create({
+      name,
+      icon,
+      path,
+      type,
+      parent: parent || null
+    });
+
+    res.status(201).json({
+      message: 'Menu item created successfully',
+      menu: newMenu
+    });
+  } catch (error) {
+    if (error.code === 11000) {
+      return res.status(400).json({ message: 'Path must be unique' });
+    }
+    console.error('Error creating menu:', error);
+    res.status(500).json({ message: 'Server error creating menu' });
+  }
 };
 
-// --- Función 4: Actualizar un Menú (Update) ---
 exports.updateMenu = async (req, res) => {
-    try {
-        const { name, icon, path, type, parent } = req.body;
+  try {
+    const { name, icon, path, type, parent } = req.body;
 
-        const updatedMenu = await Menu.findByIdAndUpdate(
+    const updatedMenu = await Menu.findByIdAndUpdate(
             req.params.id,
             { name, icon, path, type, parent: parent || null },
             { new: true, runValidators: true }
