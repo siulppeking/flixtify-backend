@@ -66,3 +66,30 @@ Inicia el servidor en modo producción.
 - [Morgan](https://github.com/expressjs/morgan) - HTTP request logger
 - [Nodemon](https://nodemon.io/) - Monitor de cambios para desarrollo
 - [dotenv](https://github.com/motdotla/dotenv) - Variables de entorno
+
+## API Docs (Swagger)
+
+Este proyecto incluye documentación de la API en Swagger.
+
+- Archivo: `swagger.yaml`
+- Visualización: Cuando el servidor está corriendo, la UI de Swagger está disponible en `/api-docs`.
+
+### Cómo acceder
+
+1. Inicia el servidor (`npm run dev` o `npm start`).
+2. Abre tu navegador en `http://localhost:3000/api-docs`.
+
+## Variables de entorno
+
+Las siguientes variables están disponibles (ver `.env.example`):
+
+- `URL_MONGODB`: cadena de conexión a MongoDB.
+- `PORT`: puerto de la aplicación.
+- `JWT_SECRET`: clave para firmar JWT.
+- `JWT_REFRESH_SECRET`: clave para refrescar JWT.
+- `NODE_ENV`: entorno (`development`, `production`).
+
+## Seguridad
+
+- No compartas el archivo `.env`.
+- Asegúrate de que `.env` esté ignorado por Git (ver `.gitignore`).
