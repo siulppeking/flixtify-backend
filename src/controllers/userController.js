@@ -4,8 +4,8 @@ const bcrypt = require('bcryptjs');
 
 const USER_PROJECTION = '-password -twoFAVerifiedSession';
 
-const checkOwnerOrAdmin = (reqUserId, targetId) => {
-  return reqUserId.toString() === targetId.toString();
+const isUserOwner = (requestingUserId, targetUserId) => {
+  return requestingUserId.toString() === targetUserId.toString();
 };
 
 exports.createUser = async (req, res) => {
@@ -64,7 +64,7 @@ exports.getUserById = async (req, res) => {
       return res.status(404).json({ message: 'User not found or deleted' });
     }
 
-    if (!checkOwnerOrAdmin(requestingUserId, userId)) {
+    if (!isUserOwner(requestingUserId, userId)) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -81,7 +81,7 @@ exports.updateUser = async (req, res) => {
     const requestingUserId = req.user.id;
     const updates = req.body;
 
-    if (!checkOwnerOrAdmin(requestingUserId, userId)) {
+    if (!isUserOwner(requestingUserId, userId)) {
       return res.status(403).json({ message: 'Access denied to update this profile' });
         }
 
