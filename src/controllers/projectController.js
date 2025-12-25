@@ -1,6 +1,12 @@
 const Project = require('../models/Project');
 const Task = require('../models/Task');
 
+/**
+ * Create a new project for the authenticated user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
 exports.createProject = async (req, res) => {
   try {
     const ownerId = req.user.id;
@@ -24,6 +30,12 @@ exports.createProject = async (req, res) => {
   }
 };
 
+/**
+ * Get all projects for the authenticated user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
 exports.getAllProjects = async (req, res) => {
   try {
     const ownerId = req.user.id;
@@ -35,6 +47,12 @@ exports.getAllProjects = async (req, res) => {
   }
 };
 
+/**
+ * Get a specific project by ID if the user is the owner
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
 exports.getProjectById = async (req, res) => {
   try {
     const ownerId = req.user.id;
@@ -52,6 +70,12 @@ exports.getProjectById = async (req, res) => {
   }
 };
 
+/**
+ * Update a project if the user is the owner
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
 exports.updateProject = async (req, res) => {
   try {
     const ownerId = req.user.id;
@@ -77,7 +101,12 @@ exports.updateProject = async (req, res) => {
     }
 };
 
-// --- DELETE Project (Verifica dueño y elimina Tareas en cascada) ---
+/**
+ * Delete a project and all associated tasks if the user is the owner
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
 exports.deleteProject = async (req, res) => {
     try {
         const ownerId = req.user.id;
