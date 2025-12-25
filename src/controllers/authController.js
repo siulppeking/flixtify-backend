@@ -9,6 +9,16 @@ const jwt = require('jsonwebtoken');
 const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
 
+// Constants
+const TOKEN_EXPIRATION = {
+  ACCESS: '15m',
+  REFRESH: '7d',
+  REFRESH_MS: 7 * 24 * 60 * 60 * 1000
+};
+
+const BCRYPT_SALT_ROUNDS = 10;
+const DEFAULT_ROLE_NAME = 'USER';
+
 // Register: Create user and assign default role
 exports.register = async (req, res) => {
   try {
@@ -17,14 +27,14 @@ exports.register = async (req, res) => {
     const exists = await User.findOne({ email });
     if (exists) return res.status(400).json({ message: 'Email already exists' });
 
-    const hashed = await bcrypt.hash(password, 10);
+    const hashed = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
     const user = await User.create({
       username,
       email,
       password: hashed
     });
 
-    const defaultRole = await Role.findOne({ name: 'USER' });
+    const defaultRole = await Role.findOne({ name: DEFAULT_ROLE_NAME });
     if (defaultRole) {
       await UserRole.create({
         userId: user._id,
@@ -71,19 +81,19 @@ exports.login = async (req, res) => {
     const accessToken = jwt.sign(
       { id: user._id, activeRoleId },
       process.env.JWT_SECRET,
-      { expiresIn: '15m' }
+      { expiresIn: TOKEN_EXPIRATION.ACCESS }
     );
     const refreshToken = jwt.sign(
       { id: user._id, activeRoleId },
       process.env.JWT_REFRESH_SECRET,
-      { expiresIn: '7d' }
+      { expiresIn: TOKEN_EXPIRATION.REFRESH }
         );
 
         // 5. Guardar Refresh Token
         await Token.create({
             userId: user._id,
             refreshToken,
-            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            expiresAt: new Date(Date.now() + TOKEN_EXPIRATION.REFRESH_MS),
             userAgent: req.headers["user-agent"],
             ip: req.ip
         });
@@ -143,7 +153,7 @@ exports.refreshToken = async (req, res) => {
         const accessToken = jwt.sign(
             { id: payload.id, activeRoleId: payload.activeRoleId },
             process.env.JWT_SECRET,
-            { expiresIn: "15m" }
+            { expiresIn: TOKEN_EXPIRATION.ACCESS }
         );
 
         res.json({ accessToken });
@@ -180,7 +190,7 @@ exports.switchActiveRole = async (req, res) => {
         const accessToken = jwt.sign(
             { id: userId, activeRoleId: newRoleId },
             process.env.JWT_SECRET,
-            { expiresIn: "15m" }
+            { expiresIn: TOKEN_EXPIRATION.ACCESS }
         );
 
         res.json({
