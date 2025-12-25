@@ -19,6 +19,23 @@ const TOKEN_EXPIRATION = {
 const BCRYPT_SALT_ROUNDS = 10;
 const DEFAULT_ROLE_NAME = 'USER';
 
+/**
+ * Build user response object with basic information
+ * @param {Object} user - User document from database
+ * @param {string} activeRoleName - Name of the active role
+ * @param {Array<string>} allRoles - Array of all role names
+ * @returns {Object} Formatted user response object
+ */
+const buildUserResponse = (user, activeRoleName, allRoles) => {
+  return {
+    id: user._id,
+    username: user.username,
+    email: user.email,
+    activeRole: activeRoleName,
+    roles: allRoles
+  };
+};
+
 // Register: Create user and assign default role
 exports.register = async (req, res) => {
   try {
@@ -102,17 +119,12 @@ exports.login = async (req, res) => {
         const allUserRoles = await UserRole.find({ userId: user._id }).populate('roleId');
         const rolesNames = allUserRoles.map(ur => ur.roleId.name);
 
+        const userResponse = buildUserResponse(user, activeUserRole.roleId.name, rolesNames);
 
         res.json({
             accessToken,
             refreshToken,
-            user: {
-                id: user._id,
-                username: user.username,
-                email: user.email,
-                activeRole: activeUserRole.roleId.name,
-                roles: rolesNames // Todos los roles que posee
-            }
+            user: userResponse
         });
     } catch (error) {
         console.error(error);
