@@ -41,6 +41,12 @@ const checkTaskOwnership = async (taskId, ownerId) => {
   }
 };
 
+/**
+ * Create a new task in a project
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
 exports.createTask = async (req, res) => {
   try {
     const ownerId = req.user.id;
@@ -69,6 +75,12 @@ exports.createTask = async (req, res) => {
   }
 };
 
+/**
+ * Get all tasks for projects owned by the authenticated user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
 exports.getAllTasks = async (req, res) => {
   try {
     const ownerId = req.user.id;
@@ -87,7 +99,12 @@ exports.getAllTasks = async (req, res) => {
   }
 };
 
-// --- READ One Task (Verifica dueño del proyecto) ---
+/**
+ * Get a specific task by ID if user owns the project
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
 exports.getTaskById = async (req, res) => {
     try {
         const ownerId = req.user.id;
@@ -107,7 +124,12 @@ exports.getTaskById = async (req, res) => {
     }
 };
 
-// --- UPDATE Task (Verifica dueño del proyecto) ---
+/**
+ * Update a task if user owns the project
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
 exports.updateTask = async (req, res) => {
     try {
         const ownerId = req.user.id;
@@ -130,7 +152,12 @@ exports.updateTask = async (req, res) => {
     }
 };
 
-// --- DELETE Task (Verifica dueño del proyecto) ---
+/**
+ * Delete a task if user owns the project
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
 exports.deleteTask = async (req, res) => {
     try {
         const ownerId = req.user.id;
