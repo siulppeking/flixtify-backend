@@ -1,6 +1,28 @@
 const Task = require('../models/Task');
 const Project = require('../models/Project');
 
+// Constants
+const ERROR_MESSAGES = {
+  TASK_NOT_FOUND: 'Task not found or access denied.',
+  PROJECT_NOT_FOUND: 'Project not found or access denied',
+  SERVER_ERROR_CREATE: 'Server error creating task',
+  SERVER_ERROR_FETCH: 'Server error fetching tasks',
+  SERVER_ERROR_UPDATE: 'Server error updating task.',
+  SERVER_ERROR_DELETE: 'Server error deleting task.'
+};
+
+const SUCCESS_MESSAGES = {
+  TASK_CREATED: 'Task created successfully',
+  TASK_UPDATED: 'Task updated successfully.',
+  TASK_DELETED: 'Task deleted successfully.'
+};
+
+/**
+ * Validates task ownership through project ownership
+ * @param {string} taskId - The task ID to validate
+ * @param {string} ownerId - The owner ID to validate against
+ * @returns {Promise<Object|null>} Task object if valid, null otherwise
+ */
 const checkTaskOwnership = async (taskId, ownerId) => {
   try {
     const task = await Task.findById(taskId).populate({
@@ -26,7 +48,7 @@ exports.createTask = async (req, res) => {
 
     const project = await Project.findOne({ _id: projectId, ownerId });
     if (!project) {
-      return res.status(403).json({ message: 'Project not found or access denied' });
+      return res.status(403).json({ message: ERROR_MESSAGES.PROJECT_NOT_FOUND });
     }
 
     const newTask = await Task.create({
@@ -38,12 +60,12 @@ exports.createTask = async (req, res) => {
       dueDate
     });
     res.status(201).json({
-      message: 'Task created successfully',
+      message: SUCCESS_MESSAGES.TASK_CREATED,
       task: newTask
     });
   } catch (error) {
     console.error('Error creating task:', error);
-    res.status(500).json({ message: 'Server error creating task' });
+    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_CREATE });
   }
 };
 
@@ -61,7 +83,7 @@ exports.getAllTasks = async (req, res) => {
     res.json(tasks);
   } catch (error) {
     console.error('Error fetching tasks:', error);
-    res.status(500).json({ message: 'Server error fetching tasks' });
+    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH });
   }
 };
 
@@ -72,7 +94,7 @@ exports.getTaskById = async (req, res) => {
         const task = await checkTaskOwnership(req.params.id, ownerId);
 
         if (!task) {
-            return res.status(404).json({ message: "Task not found or access denied." });
+            return res.status(404).json({ message: ERROR_MESSAGES.TASK_NOT_FOUND });
         }
 
         // Poblar si es necesario, excluyendo el ownerId del proyecto para el cliente
@@ -81,7 +103,7 @@ exports.getTaskById = async (req, res) => {
         res.json(task);
     } catch (error) {
         console.error("Error fetching task:", error);
-        res.status(500).json({ message: "Server error fetching task." });
+        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH });
     }
 };
 
@@ -95,16 +117,16 @@ exports.updateTask = async (req, res) => {
         // 1. Verificar propiedad antes de actualizar
         const task = await checkTaskOwnership(taskId, ownerId);
         if (!task) {
-            return res.status(404).json({ message: "Task not found or access denied." });
+            return res.status(404).json({ message: ERROR_MESSAGES.TASK_NOT_FOUND });
         }
 
         // 2. Si es dueño, actualiza.
         const updatedTask = await Task.findByIdAndUpdate(taskId, updates, { new: true, runValidators: true });
 
-        res.json({ message: "Task updated successfully.", task: updatedTask });
+        res.json({ message: SUCCESS_MESSAGES.TASK_UPDATED, task: updatedTask });
     } catch (error) {
         console.error("Error updating task:", error);
-        res.status(500).json({ message: "Server error updating task." });
+        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_UPDATE });
     }
 };
 
@@ -117,15 +139,15 @@ exports.deleteTask = async (req, res) => {
         // 1. Verificar propiedad antes de eliminar
         const task = await checkTaskOwnership(taskId, ownerId);
         if (!task) {
-            return res.status(404).json({ message: "Task not found or access denied." });
+            return res.status(404).json({ message: ERROR_MESSAGES.TASK_NOT_FOUND });
         }
 
         // 2. Si es dueño, elimina
         await Task.deleteOne({ _id: taskId });
 
-        res.json({ message: "Task deleted successfully." });
+        res.json({ message: SUCCESS_MESSAGES.TASK_DELETED });
     } catch (error) {
         console.error("Error deleting task:", error);
-        res.status(500).json({ message: "Server error deleting task." });
+        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_DELETE });
     }
 };
