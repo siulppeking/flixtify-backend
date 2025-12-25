@@ -2,6 +2,29 @@ const User = require('../models/User');
 const UserRole = require('../models/UserRole');
 const Role = require('../models/Role');
 
+// Constants
+const USER_PROJECTION = '-password -twoFA.secret';
+
+const ERROR_MESSAGES = {
+  USER_NOT_FOUND: 'User not found',
+  SELF_MODIFICATION: 'Cannot modify your own account via admin route. Use /profile instead',
+  SELF_DELETION: 'Cannot delete your own account',
+  SERVER_ERROR_FETCH: 'Server error fetching users',
+  SERVER_ERROR_FETCH_SINGLE: 'Server error fetching user',
+  SERVER_ERROR_UPDATE: 'Server error updating user',
+  SERVER_ERROR_DELETE: 'Server error deleting user'
+};
+
+const SUCCESS_MESSAGES = {
+  USER_UPDATED: 'User updated successfully',
+  USER_DELETED: 'User and associated roles deleted successfully'
+};
+
+/**
+ * Retrieves all roles assigned to a user
+ * @param {string} userId - The user ID
+ * @returns {Promise<Array>} Array of role objects with id, name, and isActive
+ */
 const getAssignedRoles = async (userId) => {
   const userAssignments = await UserRole.find({ userId }).populate('roleId', 'name');
   return userAssignments.map(assignment => ({
@@ -13,7 +36,7 @@ const getAssignedRoles = async (userId) => {
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().select('-password -twoFA.secret');
+    const users = await User.find().select(USER_PROJECTION);
 
     const usersWithRoles = await Promise.all(users.map(async (user) => {
       const roles = await getAssignedRoles(user._id);
@@ -26,7 +49,7 @@ exports.getAllUsers = async (req, res) => {
     res.json(usersWithRoles);
   } catch (error) {
     console.error('Error fetching all users:', error);
-    res.status(500).json({ message: 'Server error fetching users' });
+    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH });
   }
 };
 
@@ -34,9 +57,9 @@ exports.getUserById = async (req, res) => {
   try {
     const userId = req.params.id;
 
-    const user = await User.findById(userId).select('-password -twoFA.secret');
+    const user = await User.findById(userId).select(USER_PROJECTION);
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: ERROR_MESSAGES.USER_NOT_FOUND });
     }
 
     const roles = await getAssignedRoles(userId);
@@ -47,7 +70,7 @@ exports.getUserById = async (req, res) => {
         });
     } catch (error) {
         console.error("Error fetching user by ID:", error);
-        res.status(500).json({ message: "Server error fetching user." });
+        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH_SINGLE });
     }
 };
 
@@ -63,7 +86,7 @@ exports.updateUser = async (req, res) => {
         // PRECAUCIÓN: No permitir que un administrador cambie su propia cuenta por esta ruta.
         // Las actualizaciones personales deben ir por /profile.
         if (adminId === targetUserId) {
-            return res.status(400).json({ message: "Cannot modify your own account via admin route. Use /profile instead." });
+            return res.status(400).json({ message: ERROR_MESSAGES.SELF_MODIFICATION });
         }
 
         // Excluir la posibilidad de que el admin intente cambiar la contraseña por esta ruta
@@ -73,19 +96,19 @@ exports.updateUser = async (req, res) => {
             targetUserId,
             { $set: updates },
             { new: true, runValidators: true }
-        ).select('-password -twoFA.secret');
+        ).select(USER_PROJECTION);
 
         if (!updatedUser) {
-            return res.status(404).json({ message: "User not found." });
+            return res.status(404).json({ message: ERROR_MESSAGES.USER_NOT_FOUND });
         }
 
         res.json({
-            message: "User updated successfully.",
+            message: SUCCESS_MESSAGES.USER_UPDATED,
             user: updatedUser
         });
     } catch (error) {
         console.error("Error updating user:", error);
-        res.status(500).json({ message: "Server error updating user." });
+        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_UPDATE });
     }
 };
 
@@ -99,7 +122,7 @@ exports.deleteUser = async (req, res) => {
 
         // PRECAUCIÓN: Impedir que un administrador se elimine a sí mismo
         if (adminId === targetUserId) {
-            return res.status(400).json({ message: "Cannot delete your own account." });
+            return res.status(400).json({ message: ERROR_MESSAGES.SELF_DELETION });
         }
 
         // 1. Eliminar todas las asignaciones de roles para ese usuario
@@ -109,15 +132,15 @@ exports.deleteUser = async (req, res) => {
         const result = await User.deleteOne({ _id: targetUserId });
 
         if (result.deletedCount === 0) {
-            return res.status(404).json({ message: "User not found." });
+            return res.status(404).json({ message: ERROR_MESSAGES.USER_NOT_FOUND });
         }
 
         // Opcional (si implementas lógica de negocio): 
         // También deberías limpiar/re-asignar sus Proyectos y Tareas (Project.ownerId y Task.assignedTo)
 
-        res.json({ message: "User and associated roles deleted successfully." });
+        res.json({ message: SUCCESS_MESSAGES.USER_DELETED });
     } catch (error) {
         console.error("Error deleting user:", error);
-        res.status(500).json({ message: "Server error deleting user." });
+        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_DELETE });
     }
 };
