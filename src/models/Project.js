@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 
+// Constants for Project model
+const PROJECT_STATUS = ['Active', 'On Hold', 'Completed'];
+const DEFAULT_PROJECT_STATUS = 'Active';
+
 const ProjectSchema = new mongoose.Schema(
   {
     name: {
@@ -20,8 +24,8 @@ const ProjectSchema = new mongoose.Schema(
     dueDate: Date,
     status: {
       type: String,
-      enum: ['Active', 'On Hold', 'Completed'],
-      default: 'Active'
+      enum: PROJECT_STATUS,
+      default: DEFAULT_PROJECT_STATUS
     }
   },
   { timestamps: true }
