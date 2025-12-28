@@ -2,35 +2,67 @@ const RoleMenu = require('../models/RoleMenu');
 const Role = require('../models/Role');
 const Menu = require('../models/Menu');
 
+// Constants
+const ERROR_MESSAGES = {
+  REQUIRED_FIELDS: 'roleId and menuId are required',
+  REQUIRED_PARAMS: 'roleId and menuId must be provided in the URL',
+  MENU_ALREADY_ASSIGNED: 'This menu is already assigned to this role',
+  INVALID_IDS: 'One or both IDs (Role or Menu) are invalid or not found',
+  ASSIGNMENT_NOT_FOUND: 'Assignment not found',
+  SERVER_ERROR_ASSIGN: 'Server error assigning menu',
+  SERVER_ERROR_REVOKE: 'Server error revoking menu',
+  SERVER_ERROR_FETCH: 'Server error fetching menus by role'
+};
+
+const SUCCESS_MESSAGES = {
+  MENU_ASSIGNED: 'Menu assigned to role successfully',
+  MENU_REVOKED: 'Menu permission revoked from role successfully',
+  MENUS_FETCHED: 'Menus fetched successfully'
+};
+
+/**
+ * Validates that both roleId and menuId exist in database
+ * @param {string} roleId - The role ID to validate
+ * @param {string} menuId - The menu ID to validate
+ * @returns {Promise<Object>} Object with { role, menu, valid: boolean }
+ */
+const validateRoleAndMenu = async (roleId, menuId) => {
+  const role = await Role.findById(roleId);
+  const menu = await Menu.findById(menuId);
+  return {
+    role,
+    menu,
+    valid: !!(role && menu)
+  };
+};
+
 exports.assignMenuToRole = async (req, res) => {
   try {
     const { roleId, menuId } = req.body;
 
     if (!roleId || !menuId) {
-      return res.status(400).json({ message: 'roleId and menuId are required' });
+      return res.status(400).json({ message: ERROR_MESSAGES.REQUIRED_FIELDS });
     }
 
     const existingAssignment = await RoleMenu.findOne({ roleId, menuId });
     if (existingAssignment) {
-      return res.status(400).json({ message: 'This menu is already assigned to this role' });
+      return res.status(400).json({ message: ERROR_MESSAGES.MENU_ALREADY_ASSIGNED });
     }
 
-    const roleExists = await Role.findById(roleId);
-    const menuExists = await Menu.findById(menuId);
-
-    if (!roleExists || !menuExists) {
-      return res.status(404).json({ message: 'One or both IDs (Role or Menu) are invalid or not found' });
+    const { valid } = await validateRoleAndMenu(roleId, menuId);
+    if (!valid) {
+      return res.status(404).json({ message: ERROR_MESSAGES.INVALID_IDS });
     }
 
     const newAssignment = await RoleMenu.create({ roleId, menuId });
 
     res.status(201).json({
-      message: 'Menu assigned to role successfully',
+      message: SUCCESS_MESSAGES.MENU_ASSIGNED,
       assignment: newAssignment
     });
   } catch (error) {
     console.error('Error assigning menu to role:', error);
-    res.status(500).json({ message: 'Server error assigning menu' });
+    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_ASSIGN });
   }
 };
 
@@ -39,25 +71,31 @@ exports.revokeMenuFromRole = async (req, res) => {
     const { roleId, menuId } = req.params;
 
     if (!roleId || !menuId) {
-      return res.status(400).json({ message: 'roleId and menuId must be provided in the URL' });
+      return res.status(400).json({ message: ERROR_MESSAGES.REQUIRED_PARAMS });
     }
 
         // 1. Eliminar el enlace
         const result = await RoleMenu.deleteOne({ roleId, menuId });
 
         if (result.deletedCount === 0) {
-            return res.status(404).json({ message: "Assignment not found." });
+            return res.status(404).json({ message: ERROR_MESSAGES.ASSIGNMENT_NOT_FOUND });
         }
 
-        res.json({ message: "Menu permission revoked from role successfully." });
+        res.json({ message: SUCCESS_MESSAGES.MENU_REVOKED });
     } catch (error) {
         console.error("Error revoking menu from role:", error);
-        res.status(500).json({ message: "Server error revoking menu." });
+        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_REVOKE });
     }
 };
 
-// --- Función 3: Obtener Menús Asignados a un Rol (Read By Role) ---
+// --- Get Menus Assigned to a Role (Read By Role) ---
 // GET /role-menus/:roleId
+/**
+ * Get all menus assigned to a role
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
 exports.getMenusByRole = async (req, res) => {
     try {
         const roleId = req.params.roleId;
@@ -71,6 +109,6 @@ exports.getMenusByRole = async (req, res) => {
         res.json(menus);
     } catch (error) {
         console.error("Error fetching menus by role:", error);
-        res.status(500).json({ message: "Server error fetching menus by role." });
+        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH });
     }
 };
