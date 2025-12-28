@@ -2,35 +2,79 @@ const UserRole = require('../models/UserRole');
 const User = require('../models/User');
 const Role = require('../models/Role');
 
+// Constants
+const ERROR_MESSAGES = {
+  REQUIRED_FIELDS: 'userId and roleId are required',
+  ROLE_ALREADY_ASSIGNED: 'This role is already assigned to this user',
+  INVALID_IDS: 'One or both IDs (User or Role) are invalid or not found',
+  ASSIGNMENT_NOT_FOUND: 'Assignment not found',
+  ACTIVE_ROLE_ERROR: "Cannot revoke: This role is currently the user's active role. Please switch roles first",
+  SERVER_ERROR_ASSIGN: 'Server error assigning role',
+  SERVER_ERROR_REVOKE: 'Server error revoking role',
+  SERVER_ERROR_FETCH: 'Server error fetching roles by user'
+};
+
+const SUCCESS_MESSAGES = {
+  ROLE_ASSIGNED: 'Role assigned to user successfully',
+  ROLE_REVOKED: 'Role revoked from user successfully',
+  ROLES_FETCHED: 'Roles fetched successfully'
+};
+
+/**
+ * Validates that both userId and roleId exist in database
+ * @param {string} userId - The user ID to validate
+ * @param {string} roleId - The role ID to validate
+ * @returns {Promise<Object>} Object with { user, role, valid: boolean }
+ */
+const validateUserAndRole = async (userId, roleId) => {
+  const user = await User.findById(userId);
+  const role = await Role.findById(roleId);
+  return {
+    user,
+    role,
+    valid: !!(user && role)
+  };
+};
+
+/**
+ * Format role assignment data for response
+ * @param {Object} assignment - The role assignment object
+ * @returns {Object} Formatted assignment data
+ */
+const formatRoleAssignment = (assignment) => ({
+  roleId: assignment.roleId._id,
+  name: assignment.roleId.name,
+  description: assignment.roleId.description,
+  isActive: assignment.isActive
+});
+
 exports.assignRoleToUser = async (req, res) => {
   try {
     const { userId, roleId } = req.body;
 
     if (!userId || !roleId) {
-      return res.status(400).json({ message: 'userId and roleId are required' });
+      return res.status(400).json({ message: ERROR_MESSAGES.REQUIRED_FIELDS });
     }
 
     const existingAssignment = await UserRole.findOne({ userId, roleId });
     if (existingAssignment) {
-      return res.status(400).json({ message: 'This role is already assigned to this user' });
+      return res.status(400).json({ message: ERROR_MESSAGES.ROLE_ALREADY_ASSIGNED });
     }
 
-    const userExists = await User.findById(userId);
-    const roleExists = await Role.findById(roleId);
-
-    if (!userExists || !roleExists) {
-      return res.status(404).json({ message: 'One or both IDs (User or Role) are invalid or not found' });
+    const { valid } = await validateUserAndRole(userId, roleId);
+    if (!valid) {
+      return res.status(404).json({ message: ERROR_MESSAGES.INVALID_IDS });
     }
 
     const newAssignment = await UserRole.create({ userId, roleId, isActive: false });
 
     res.status(201).json({
-      message: 'Role assigned to user successfully',
+      message: SUCCESS_MESSAGES.ROLE_ASSIGNED,
       assignment: newAssignment
     });
   } catch (error) {
     console.error('Error assigning role to user:', error);
-    res.status(500).json({ message: 'Server error assigning role' });
+    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_ASSIGN });
   }
 };
 
@@ -41,7 +85,7 @@ exports.revokeRoleFromUser = async (req, res) => {
     const activeAssignment = await UserRole.findOne({ userId, roleId, isActive: true });
         if (activeAssignment) {
             return res.status(400).json({
-                message: "Cannot revoke: This role is currently the user's active role. Please switch roles first."
+                message: ERROR_MESSAGES.ACTIVE_ROLE_ERROR
             });
         }
 
@@ -49,18 +93,24 @@ exports.revokeRoleFromUser = async (req, res) => {
         const result = await UserRole.deleteOne({ userId, roleId });
 
         if (result.deletedCount === 0) {
-            return res.status(404).json({ message: "Assignment not found." });
+            return res.status(404).json({ message: ERROR_MESSAGES.ASSIGNMENT_NOT_FOUND });
         }
 
-        res.json({ message: "Role revoked from user successfully." });
+        res.json({ message: SUCCESS_MESSAGES.ROLE_REVOKED });
     } catch (error) {
         console.error("Error revoking role from user:", error);
-        res.status(500).json({ message: "Server error revoking role." });
+        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_REVOKE });
     }
 };
 
-// --- Función 3: Obtener Roles Asignados a un Usuario (Read By User) ---
+// --- Get Roles Assigned to a User (Read By User) ---
 // GET /user-roles/:userId
+/**
+ * Get all roles assigned to a user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
 exports.getRolesByUser = async (req, res) => {
     try {
         const userId = req.params.userId;
@@ -69,16 +119,11 @@ exports.getRolesByUser = async (req, res) => {
         const assignments = await UserRole.find({ userId }).populate('roleId');
 
         // 2. Mapear para devolver los detalles del rol, incluyendo si está activo
-        const roles = assignments.map(a => ({
-            roleId: a.roleId._id,
-            name: a.roleId.name,
-            description: a.roleId.description,
-            isActive: a.isActive
-        }));
+        const roles = assignments.map(formatRoleAssignment);
 
         res.json(roles);
     } catch (error) {
         console.error("Error fetching roles by user:", error);
-        res.status(500).json({ message: "Server error fetching roles by user." });
+        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH });
     }
 };
