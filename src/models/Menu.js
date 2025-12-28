@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 
+// Constants for Menu model types
+const MENU_TYPES = ['menu', 'submenu', 'form'];
+
 const MenuSchema = new mongoose.Schema(
   {
     name: {
@@ -14,7 +17,7 @@ const MenuSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['menu', 'submenu', 'form'],
+      enum: MENU_TYPES,
       required: true
     },
     parent: {
