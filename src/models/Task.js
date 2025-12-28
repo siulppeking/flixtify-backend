@@ -1,5 +1,12 @@
 const mongoose = require('mongoose');
 
+// Constants for Task model enums
+const PRIORITY_LEVELS = ['Low', 'Medium', 'High'];
+const DEFAULT_PRIORITY = 'Medium';
+
+const TASK_STATUS = ['To Do', 'In Progress', 'Done'];
+const DEFAULT_STATUS = 'To Do';
+
 const TaskSchema = new mongoose.Schema(
   {
     title: {
@@ -18,13 +25,13 @@ const TaskSchema = new mongoose.Schema(
     },
     priority: {
       type: String,
-      enum: ['Low', 'Medium', 'High'],
-      default: 'Medium'
+      enum: PRIORITY_LEVELS,
+      default: DEFAULT_PRIORITY
     },
     status: {
       type: String,
-      enum: ['To Do', 'In Progress', 'Done'],
-      default: 'To Do'
+      enum: TASK_STATUS,
+      default: DEFAULT_STATUS
     },
     dueDate: Date
   },
