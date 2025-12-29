@@ -7,13 +7,19 @@ const MenuSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true
+      required: true,
+      minlength: 2,
+      maxlength: 100
     },
-    icon: String,
+    icon: {
+      type: String,
+      maxlength: 50
+    },
     path: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
+      lowercase: true
     },
     type: {
       type: String,
