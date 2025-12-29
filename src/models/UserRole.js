@@ -5,12 +5,14 @@ const UserRoleSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true
+      required: true,
+      index: true
     },
     roleId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Role',
-      required: true
+      required: true,
+      index: true
     },
     isActive: {
       type: Boolean,
