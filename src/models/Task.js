@@ -12,26 +12,32 @@ const TaskSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
+      minlength: 3,
+      maxlength: 100
     },
     description: {
       type: String,
-      trim: true
+      trim: true,
+      maxlength: 1000
     },
     projectId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Project',
-      required: true
+      required: true,
+      index: true
     },
     priority: {
       type: String,
       enum: PRIORITY_LEVELS,
-      default: DEFAULT_PRIORITY
+      default: DEFAULT_PRIORITY,
+      index: true
     },
     status: {
       type: String,
       enum: TASK_STATUS,
-      default: DEFAULT_STATUS
+      default: DEFAULT_STATUS,
+      index: true
     },
     dueDate: Date
   },
