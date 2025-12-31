@@ -1,15 +1,10 @@
 const UserRole = require('../models/UserRole');
 const Role = require('../models/Role');
+const httpStatus = require('../constants/httpStatus');
+const errorMessages = require('../constants/errorMessages');
 
 // Constants
 const ADMIN_ROLE_NAME = 'ADMIN';
-
-const AUTH_ERRORS = {
-  NO_ACTIVE_ROLE: 'Access denied: No active role found',
-  ROLE_NOT_RECOGNIZED: 'Access denied: Role not recognized',
-  REQUIRES_ADMIN: 'Access denied: Requires ADMIN privileges',
-  VERIFICATION_FAILED: 'Authorization verification failed'
-};
 
 /**
  * Middleware to verify that the user has ADMIN role
@@ -23,24 +18,24 @@ const checkAdmin = async (req, res, next) => {
     const activeRoleId = req.user.activeRoleId;
 
     if (!activeRoleId) {
-      return res.status(403).json({ message: AUTH_ERRORS.NO_ACTIVE_ROLE });
+      return res.status(httpStatus.FORBIDDEN).json({ message: errorMessages.NO_ACTIVE_ROLE });
     }
 
     // Verify active role is ADMIN
     const activeRole = await Role.findById(activeRoleId);
 
     if (!activeRole) {
-      return res.status(403).json({ message: AUTH_ERRORS.ROLE_NOT_RECOGNIZED });
+      return res.status(httpStatus.FORBIDDEN).json({ message: errorMessages.ROLE_NOT_RECOGNIZED });
     }
 
     if (activeRole.name !== ADMIN_ROLE_NAME) {
-      return res.status(403).json({ message: AUTH_ERRORS.REQUIRES_ADMIN });
+      return res.status(httpStatus.FORBIDDEN).json({ message: errorMessages.REQUIRES_ADMIN });
     }
 
     next();
   } catch (error) {
     console.error('Authorization error:', error);
-    res.status(500).json({ message: AUTH_ERRORS.VERIFICATION_FAILED });
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: errorMessages.AUTHORIZATION_VERIFICATION_FAILED });
   }
 };
 
