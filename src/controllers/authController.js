@@ -8,16 +8,31 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
+const httpStatus = require('../constants/httpStatus');
+const errorMessages = require('../constants/errorMessages');
 
-// Constants
+// Security and Authentication Constants
+const BCRYPT_SALT_ROUNDS = 10;
+const DEFAULT_ROLE_NAME = 'USER';
+
 const TOKEN_EXPIRATION = {
   ACCESS: '15m',
   REFRESH: '7d',
   REFRESH_MS: 7 * 24 * 60 * 60 * 1000
 };
 
-const BCRYPT_SALT_ROUNDS = 10;
-const DEFAULT_ROLE_NAME = 'USER';
+const PASSWORD_REQUIREMENTS = {
+  MIN_LENGTH: 8,
+  REQUIRES_UPPERCASE: true,
+  REQUIRES_NUMBERS: true,
+  REQUIRES_SPECIAL: true
+};
+
+const TWO_FA_SETTINGS = {
+  WINDOW: 2,
+  ENABLED_MSG: '2FA token required',
+  INVALID_MSG: 'Invalid 2FA token'
+};
 
 /**
  * Build user response object with basic information
