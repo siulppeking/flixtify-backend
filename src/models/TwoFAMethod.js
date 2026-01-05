@@ -1,37 +1,53 @@
 // models/TwoFAMethod.js
 const mongoose = require("mongoose");
 
+// Constants for TwoFAMethod model
+const TWO_FA_FIELDS = {
+    USER_ID: 'userId',
+    METHOD_TYPE: 'methodType',
+    SECRET: 'secret',
+    IS_ENABLED: 'isEnabled',
+    IS_VERIFIED: 'isVerified',
+    IS_PRIMARY: 'isPrimary',
+    DELETED: 'deleted'
+};
+
+const TWO_FA_METHOD_TYPES = ["TOTP", "SMS", "EMAIL"];
+
+/**
+ * TwoFAMethod schema stores 2FA methods per user
+ */
 const TwoFAMethodSchema = new mongoose.Schema(
     {
-        userId: {
+        [TWO_FA_FIELDS.USER_ID]: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
             required: true
         },
-        methodType: {
+        [TWO_FA_FIELDS.METHOD_TYPE]: {
             type: String,
-            enum: ["TOTP", "SMS", "EMAIL"],
+            enum: TWO_FA_METHOD_TYPES,
             required: true
         },
-        secret: {
+        [TWO_FA_FIELDS.SECRET]: {
             type: String,
             required: function () {
                 return this.methodType === 'TOTP';
             }
         }, // Secreto TOTP o número de teléfono/email
-        isEnabled: {
+        [TWO_FA_FIELDS.IS_ENABLED]: {
             type: Boolean,
             default: false
         }, // Si está activo actualmente
-        isVerified: {
+        [TWO_FA_FIELDS.IS_VERIFIED]: {
             type: Boolean,
             default: false
         }, // Si el usuario lo ha verificado (para configuración inicial)
-        isPrimary: {
+        [TWO_FA_FIELDS.IS_PRIMARY]: {
             type: Boolean,
             default: false
         }, // Útil si necesitas un fallback o método principal
-        deleted: {
+        [TWO_FA_FIELDS.DELETED]: {
             type: Boolean,
             default: false
         } // Soft delete del método
@@ -40,6 +56,6 @@ const TwoFAMethodSchema = new mongoose.Schema(
 );
 
 // Asegura que no haya dos métodos primarios activos y no eliminados
-TwoFAMethodSchema.index({ userId: 1, isPrimary: 1, deleted: 1 }, { unique: true, partialFilterExpression: { isPrimary: true, deleted: false } });
+TwoFAMethodSchema.index({ [TWO_FA_FIELDS.USER_ID]: 1, [TWO_FA_FIELDS.IS_PRIMARY]: 1, [TWO_FA_FIELDS.DELETED]: 1 }, { unique: true, partialFilterExpression: { isPrimary: true, deleted: false } });
 
 module.exports = mongoose.model("TwoFAMethod", TwoFAMethodSchema);
