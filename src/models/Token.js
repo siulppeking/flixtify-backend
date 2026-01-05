@@ -1,21 +1,33 @@
 const mongoose = require('mongoose');
 
+// Constants for Token model
+const TOKEN_FIELDS = {
+  USER_ID: 'userId',
+  REFRESH_TOKEN: 'refreshToken',
+  USER_AGENT: 'userAgent',
+  IP: 'ip',
+  EXPIRES_AT: 'expiresAt'
+};
+
+/**
+ * Token schema stores refresh tokens tied to users
+ */
 const TokenSchema = new mongoose.Schema(
   {
-    userId: {
+    [TOKEN_FIELDS.USER_ID]: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
       index: true
     },
-    refreshToken: {
+    [TOKEN_FIELDS.REFRESH_TOKEN]: {
       type: String,
       required: true,
       unique: true
     },
-    userAgent: String,
-    ip: String,
-    expiresAt: {
+    [TOKEN_FIELDS.USER_AGENT]: String,
+    [TOKEN_FIELDS.IP]: String,
+    [TOKEN_FIELDS.EXPIRES_AT]: {
       type: Date,
       required: true,
       index: true
@@ -24,6 +36,6 @@ const TokenSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-TokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+TokenSchema.index({ [TOKEN_FIELDS.EXPIRES_AT]: 1 }, { expireAfterSeconds: 0 });
 
 module.exports = mongoose.model('Token', TokenSchema);
