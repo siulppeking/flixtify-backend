@@ -1,3 +1,4 @@
+// Project Validator - Validates project-related request data
 const { body } = require('express-validator');
 const handleValidationErrors = require('../middlewares/handleValidationErrors');
 
