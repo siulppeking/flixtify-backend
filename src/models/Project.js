@@ -1,3 +1,4 @@
+// Project Model - Represents projects that contain tasks and are assigned to users
 const mongoose = require('mongoose');
 
 const PROJECT_STATUS = ['Active', 'On Hold', 'Completed'];
