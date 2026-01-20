@@ -1,3 +1,4 @@
+// Admin Check Middleware - Verifies user has admin role for protected routes
 const UserRole = require('../models/UserRole');
 const Role = require('../models/Role');
 const httpStatus = require('../constants/httpStatus');
