@@ -1,3 +1,4 @@
+// Role Menu Controller - Manages mapping of menus to roles for access control
 const RoleMenu = require('../models/RoleMenu');
 const Role = require('../models/Role');
 const Menu = require('../models/Menu');
