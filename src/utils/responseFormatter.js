@@ -3,6 +3,8 @@
  * Standardizes API response formatting across all endpoints
  */
 
+// Helper functions for consistent HTTP response formatting
+
 const httpStatus = require('../constants/httpStatus');
 
 /**
