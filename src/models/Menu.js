@@ -1,3 +1,4 @@
+// Menu Model - Represents dynamic menu items for application navigation
 const mongoose = require('mongoose');
 
 // Constants for Menu model types
