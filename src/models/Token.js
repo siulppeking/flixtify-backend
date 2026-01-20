@@ -1,3 +1,4 @@
+// Token Model - Stores JWT refresh tokens for user authentication sessions
 const mongoose = require('mongoose');
 
 // Constants for Token model
