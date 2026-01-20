@@ -1,3 +1,4 @@
+// Project Routes - CRUD operations for projects
 const express = require('express');
 const router = express.Router();
 const projectController = require('../controllers/projectController');
