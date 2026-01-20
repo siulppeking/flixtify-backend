@@ -1,3 +1,4 @@
+// UserRole Model - Associates users with roles for permission management
 const mongoose = require('mongoose');
 
 // Constants for UserRole model
