@@ -1,3 +1,4 @@
+// Role Model - Represents role definitions for role-based access control (RBAC)
 const mongoose = require('mongoose');
 
 // Constants for Role model
