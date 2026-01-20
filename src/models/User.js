@@ -1,3 +1,4 @@
+// User Model - Represents user accounts with authentication and profile information
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
