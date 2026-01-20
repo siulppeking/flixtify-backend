@@ -1,3 +1,4 @@
+// Authentication Controller - Handles user registration, login, and JWT token management
 const User = require('../models/User');
 const Role = require('../models/Role');
 const Token = require('../models/Token');
