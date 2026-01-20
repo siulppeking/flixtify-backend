@@ -1,3 +1,4 @@
+// Authentication Middleware - Validates JWT tokens and extracts user information
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const httpStatus = require('../constants/httpStatus');
