@@ -1,3 +1,4 @@
+// Task Model - Represents individual tasks with status, priority, and deadline tracking
 const mongoose = require('mongoose');
 
 // Constants for Task model enums
