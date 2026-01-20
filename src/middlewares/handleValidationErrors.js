@@ -1,3 +1,4 @@
+// Validation Error Handler Middleware - Catches and formats validation errors from express-validator
 const { validationResult } = require('express-validator');
 
 // Constants for validation response
