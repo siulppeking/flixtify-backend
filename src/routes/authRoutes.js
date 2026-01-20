@@ -1,3 +1,4 @@
+// Authentication Routes - User registration, login, token refresh, and 2FA endpoints
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
