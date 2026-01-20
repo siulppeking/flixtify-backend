@@ -10,6 +10,7 @@
   },
   "rules": {
     "no-unused-vars": ["warn", { "args": "none" }],
-    "no-console": "off"
+    "no-console": "off",
+    "indent": ["warn", 2]
   }
 }
