@@ -1,3 +1,4 @@
+// Main Application Entry Point - Express server initialization with routing and middleware
 require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
