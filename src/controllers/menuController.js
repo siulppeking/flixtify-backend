@@ -1,3 +1,4 @@
+// Menu Controller - Manages dynamic menu structure and role-based menu access
 const Menu = require('../models/Menu');
 const RoleMenu = require('../models/RoleMenu');
 
