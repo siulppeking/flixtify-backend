@@ -1,3 +1,4 @@
+// User Management Controller - Manages user CRUD operations and user-role associations
 const User = require('../models/User');
 const UserRole = require('../models/UserRole');
 const Role = require('../models/Role');
