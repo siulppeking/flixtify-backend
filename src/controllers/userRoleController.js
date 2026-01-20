@@ -1,3 +1,4 @@
+// User Role Controller - Manages user-role assignments and relationships
 const UserRole = require('../models/UserRole');
 const User = require('../models/User');
 const Role = require('../models/Role');
