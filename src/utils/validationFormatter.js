@@ -3,6 +3,8 @@
  * Standardizes validation error response formatting across the API
  */
 
+// Format validation errors into consistent response structure
+
 const httpStatus = require('../constants/httpStatus');
 
 /**
