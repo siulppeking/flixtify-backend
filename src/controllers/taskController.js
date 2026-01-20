@@ -1,3 +1,4 @@
+// Task Controller - Manages task creation, updates, completion, and status tracking
 const Task = require('../models/Task');
 const Project = require('../models/Project');
 
