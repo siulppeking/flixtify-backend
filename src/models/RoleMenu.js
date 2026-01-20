@@ -1,3 +1,4 @@
+// RoleMenu Model - Maps menu items to roles for role-based menu visibility
 const mongoose = require('mongoose');
 
 // Constants for RoleMenu model
