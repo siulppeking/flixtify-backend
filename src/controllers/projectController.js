@@ -1,3 +1,4 @@
+// Project Controller - Handles project and task management operations
 const Project = require('../models/Project');
 const Task = require('../models/Task');
 
