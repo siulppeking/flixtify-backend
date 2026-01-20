@@ -1,3 +1,4 @@
+// Role Controller - Manages role creation, update, deletion, and role-based permissions
 const Role = require('../models/Role');
 const UserRole = require('../models/UserRole');
 const RoleMenu = require('../models/RoleMenu');
