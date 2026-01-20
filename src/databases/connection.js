@@ -1,3 +1,4 @@
+// MongoDB Connection Module - Establishes and manages Mongoose database connection
 const mongoose = require('mongoose');
 const config = require('../config/environment');
 
