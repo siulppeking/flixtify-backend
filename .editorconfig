@@ -1,5 +1,6 @@
 root = true
 
+# General settings for all files
 [*]
 charset = utf-8
 end_of_line = lf
