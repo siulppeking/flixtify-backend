@@ -1,7 +1,7 @@
 {
   "name": "flixtify-backend",
   "version": "1.0.0",
-  "description": "Flixtify Backend API",
+  "description": "Flixtify Backend API - Task and Project Management System",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
