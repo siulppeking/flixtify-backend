@@ -1,8 +1,8 @@
 # Flixtify Backend
 
-Backend API de la aplicación Flixtify construido con Express, MongoDB y Node.js.
+Backend API de la aplicación Flixtify construido con Express, MongoDB y Node.js. Sistema completo de gestión de proyectos y tareas con autenticación segura.
 
-## Características
+## Características Principales
 
 - Autenticación JWT con tokens refresh
 - Autenticación de dos factores (2FA)
