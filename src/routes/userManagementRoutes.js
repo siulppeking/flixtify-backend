@@ -1,3 +1,4 @@
+// User Management Routes - Admin endpoints for user CRUD operations
 const express = require('express');
 const router = express.Router();
 const userManagementController = require('../controllers/userManagementController');
