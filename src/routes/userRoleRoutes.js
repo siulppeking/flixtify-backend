@@ -1,3 +1,4 @@
+// User Role Routes - Manages user-role assignments and relationships
 const express = require('express');
 const router = express.Router();
 const userRoleController = require('../controllers/userRoleController');
