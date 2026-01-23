@@ -1,3 +1,4 @@
+// Role Menu Routes - Associates menus with roles for access control
 const express = require('express');
 const router = express.Router();
 const roleMenuController = require('../controllers/roleMenuController');
