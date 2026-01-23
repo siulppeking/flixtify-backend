@@ -1,6 +1,6 @@
 # Guía de Contribución
 
-Gracias por tu interés en contribuir.
+¡Gracias por tu interés en contribuir! Nos encanta recibir mejoras y reportes de bugs.
 
 ## Requisitos / Setup
 - Usa Node.js 20.x (ver `.nvmrc`).
