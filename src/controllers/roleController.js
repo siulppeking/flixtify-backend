@@ -98,33 +98,33 @@ exports.updateRole = async (req, res) => {
 // --- Función 5: Eliminar un rol (Delete) ---
 // **IMPORTANTE:** Debe verificar y limpiar las referencias en las tablas de enlace.
 exports.deleteRole = async (req, res) => {
-    try {
-        const roleId = req.params.id;
+  try {
+    const roleId = req.params.id;
 
-        const role = await Role.findById(roleId);
-        if (!role) {
-            return res.status(404).json({ message: ERROR_MESSAGES.ROLE_NOT_FOUND_DELETE });
-        }
-
-        // 1. Verificar si el rol está en uso por algún usuario
-        const usersAssigned = await UserRole.countDocuments({ roleId });
-        if (usersAssigned > 0) {
-            return res.status(400).json({
-                message: `${ERROR_MESSAGES.ROLE_IN_USE}. ${usersAssigned} users are still assigned to this role.`
-            });
-        }
-
-        // 2. Eliminar todas las relaciones en RoleMenu (permisos de navegación)
-        await RoleMenu.deleteMany({ roleId });
-
-        // 3. Eliminar la entidad Role
-        await Role.deleteOne({ _id: roleId });
-
-        res.json({
-            message: SUCCESS_MESSAGES.ROLE_DELETED
-        });
-    } catch (error) {
-        console.error("Error deleting role:", error);
-        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_DELETE });
+    const role = await Role.findById(roleId);
+    if (!role) {
+      return res.status(404).json({ message: ERROR_MESSAGES.ROLE_NOT_FOUND_DELETE });
     }
+
+    // 1. Verificar si el rol está en uso por algún usuario
+    const usersAssigned = await UserRole.countDocuments({ roleId });
+    if (usersAssigned > 0) {
+      return res.status(400).json({
+        message: `${ERROR_MESSAGES.ROLE_IN_USE}. ${usersAssigned} users are still assigned to this role.`
+      });
+    }
+
+    // 2. Eliminar todas las relaciones en RoleMenu (permisos de navegación)
+    await RoleMenu.deleteMany({ roleId });
+
+    // 3. Eliminar la entidad Role
+    await Role.deleteOne({ _id: roleId });
+
+    res.json({
+      message: SUCCESS_MESSAGES.ROLE_DELETED
+    });
+  } catch (error) {
+    console.error('Error deleting role:', error);
+    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_DELETE });
+  }
 };
