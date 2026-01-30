@@ -107,22 +107,22 @@ exports.getAllTasks = async (req, res) => {
  * @returns {Promise<void>}
  */
 exports.getTaskById = async (req, res) => {
-    try {
-        const ownerId = req.user.id;
-        const task = await validateTaskOwnership(req.params.id, ownerId);
+  try {
+    const ownerId = req.user.id;
+    const task = await validateTaskOwnership(req.params.id, ownerId);
 
-        if (!task) {
-            return res.status(404).json({ message: ERROR_MESSAGES.TASK_NOT_FOUND });
-        }
-
-        // Poblar si es necesario, excluyendo el ownerId del proyecto para el cliente
-        await task.populate('projectId', 'name dueDate');
-
-        res.json(task);
-    } catch (error) {
-        console.error("Error fetching task:", error);
-        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH });
+    if (!task) {
+      return res.status(404).json({ message: ERROR_MESSAGES.TASK_NOT_FOUND });
     }
+
+    // Poblar si es necesario, excluyendo el ownerId del proyecto para el cliente
+    await task.populate('projectId', 'name dueDate');
+
+    res.json(task);
+  } catch (error) {
+    console.error('Error fetching task:', error);
+    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH });
+  }
 };
 
 /**
@@ -132,25 +132,25 @@ exports.getTaskById = async (req, res) => {
  * @returns {Promise<void>}
  */
 exports.updateTask = async (req, res) => {
-    try {
-        const ownerId = req.user.id;
-        const taskId = req.params.id;
-        const updates = req.body;
+  try {
+    const ownerId = req.user.id;
+    const taskId = req.params.id;
+    const updates = req.body;
 
-        // 1. Verificar propiedad antes de actualizar
-        const task = await validateTaskOwnership(taskId, ownerId);
-        if (!task) {
-            return res.status(404).json({ message: ERROR_MESSAGES.TASK_NOT_FOUND });
-        }
-
-        // 2. Si es dueño, actualiza.
-        const updatedTask = await Task.findByIdAndUpdate(taskId, updates, { new: true, runValidators: true });
-
-        res.json({ message: SUCCESS_MESSAGES.TASK_UPDATED, task: updatedTask });
-    } catch (error) {
-        console.error("Error updating task:", error);
-        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_UPDATE });
+    // 1. Verificar propiedad antes de actualizar
+    const task = await validateTaskOwnership(taskId, ownerId);
+    if (!task) {
+      return res.status(404).json({ message: ERROR_MESSAGES.TASK_NOT_FOUND });
     }
+
+    // 2. Si es dueño, actualiza.
+    const updatedTask = await Task.findByIdAndUpdate(taskId, updates, { new: true, runValidators: true });
+
+    res.json({ message: SUCCESS_MESSAGES.TASK_UPDATED, task: updatedTask });
+  } catch (error) {
+    console.error('Error updating task:', error);
+    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_UPDATE });
+  }
 };
 
 /**
@@ -160,22 +160,22 @@ exports.updateTask = async (req, res) => {
  * @returns {Promise<void>}
  */
 exports.deleteTask = async (req, res) => {
-    try {
-        const ownerId = req.user.id;
-        const taskId = req.params.id;
+  try {
+    const ownerId = req.user.id;
+    const taskId = req.params.id;
 
-        // 1. Verificar propiedad antes de eliminar
-        const task = await validateTaskOwnership(taskId, ownerId);
-        if (!task) {
-            return res.status(404).json({ message: ERROR_MESSAGES.TASK_NOT_FOUND });
-        }
-
-        // 2. Si es dueño, elimina
-        await Task.deleteOne({ _id: taskId });
-
-        res.json({ message: SUCCESS_MESSAGES.TASK_DELETED });
-    } catch (error) {
-        console.error("Error deleting task:", error);
-        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_DELETE });
+    // 1. Verificar propiedad antes de eliminar
+    const task = await validateTaskOwnership(taskId, ownerId);
+    if (!task) {
+      return res.status(404).json({ message: ERROR_MESSAGES.TASK_NOT_FOUND });
     }
+
+    // 2. Si es dueño, elimina
+    await Task.deleteOne({ _id: taskId });
+
+    res.json({ message: SUCCESS_MESSAGES.TASK_DELETED });
+  } catch (error) {
+    console.error('Error deleting task:', error);
+    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_DELETE });
+  }
 };
