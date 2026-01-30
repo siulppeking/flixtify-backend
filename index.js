@@ -1,22 +1,26 @@
 // Main Application Entry Point - Express server initialization with routing and middleware
 require('dotenv').config();
+
+// Dependencies
 const express = require('express');
 const morgan = require('morgan');
-const connectDB = require('./src/databases/connection');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 
-// Import routes
+// Database
+const connectDB = require('./src/databases/connection');
+
+// Routes
 const authRoutes = require('./src/routes/authRoutes');
-const roleRoutes = require('./src/routes/roleRoutes');
 const menuRoutes = require('./src/routes/menuRoutes');
-const roleMenuRoutes = require('./src/routes/roleMenuRoutes');
-const userRoleRoutes = require('./src/routes/userRoleRoutes');
 const projectRoutes = require('./src/routes/projectRoutes');
+const roleMenuRoutes = require('./src/routes/roleMenuRoutes');
+const roleRoutes = require('./src/routes/roleRoutes');
 const taskRoutes = require('./src/routes/taskRoutes');
-const userRoutes = require('./src/routes/userRoutes');
 const userManagementRoutes = require('./src/routes/userManagementRoutes');
+const userRoleRoutes = require('./src/routes/userRoleRoutes');
+const userRoutes = require('./src/routes/userRoutes');
 
 const swaggerDocument = YAML.load('./swagger.yaml');
 const app = express();
