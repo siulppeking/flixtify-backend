@@ -118,74 +118,74 @@ exports.login = async (req, res) => {
       { id: user._id, activeRoleId },
       process.env.JWT_REFRESH_SECRET,
       { expiresIn: TOKEN_EXPIRATION.REFRESH }
-        );
+    );
 
-        // 5. Guardar Refresh Token
-        await Token.create({
-            userId: user._id,
-            refreshToken,
-            expiresAt: new Date(Date.now() + TOKEN_EXPIRATION.REFRESH_MS),
-            userAgent: req.headers["user-agent"],
-            ip: req.ip
-        });
+    // 5. Guardar Refresh Token
+    await Token.create({
+      userId: user._id,
+      refreshToken,
+      expiresAt: new Date(Date.now() + TOKEN_EXPIRATION.REFRESH_MS),
+      userAgent: req.headers['user-agent'],
+      ip: req.ip
+    });
 
-        // 6. Obtener todos los roles para el response
-        const allUserRoles = await UserRole.find({ userId: user._id }).populate('roleId');
-        const rolesNames = allUserRoles.map(ur => ur.roleId.name);
+    // 6. Obtener todos los roles para el response
+    const allUserRoles = await UserRole.find({ userId: user._id }).populate('roleId');
+    const rolesNames = allUserRoles.map(ur => ur.roleId.name);
 
-        const userResponse = buildUserResponse(user, activeUserRole.roleId.name, rolesNames);
+    const userResponse = buildUserResponse(user, activeUserRole.roleId.name, rolesNames);
 
-        res.json({
-            accessToken,
-            refreshToken,
-            user: userResponse
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
-    }
+    res.json({
+      accessToken,
+      refreshToken,
+      user: userResponse
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
 
 // Logout
 exports.logout = async (req, res) => {
-    try {
-        const { refreshToken } = req.body;
-        if (!refreshToken) return res.status(400).json({ message: "Refresh token required" });
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.status(400).json({ message: 'Refresh token required' });
 
-        await Token.deleteOne({ refreshToken });
-        res.json({ message: "Logged out" });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Server error" });
-    }
+    await Token.deleteOne({ refreshToken });
+    res.json({ message: 'Logged out' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
 
 // Refresh
 exports.refreshToken = async (req, res) => {
-    try {
-        const { refreshToken } = req.body;
-        if (!refreshToken) return res.status(400).json({ message: "Refresh token required" });
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.status(400).json({ message: 'Refresh token required' });
 
-        const stored = await Token.findOne({ refreshToken });
-        if (!stored) return res.status(401).json({ message: "Invalid token" });
-        if (stored.expiresAt < new Date()) {
-            await Token.deleteOne({ refreshToken });
-            return res.status(401).json({ message: "Token expired, please log in again" });
-        }
-
-        const payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-
-        // Re-generar un nuevo access token con el ID y el activeRoleId del payload del refresh token
-        const accessToken = jwt.sign(
-            { id: payload.id, activeRoleId: payload.activeRoleId },
-            process.env.JWT_SECRET,
-            { expiresIn: TOKEN_EXPIRATION.ACCESS }
-        );
-
-        res.json({ accessToken });
-    } catch (error) {
-        res.status(401).json({ message: "Invalid token" });
+    const stored = await Token.findOne({ refreshToken });
+    if (!stored) return res.status(401).json({ message: 'Invalid token' });
+    if (stored.expiresAt < new Date()) {
+      await Token.deleteOne({ refreshToken });
+      return res.status(401).json({ message: 'Token expired, please log in again' });
     }
+
+    const payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+    // Re-generar un nuevo access token con el ID y el activeRoleId del payload del refresh token
+    const accessToken = jwt.sign(
+      { id: payload.id, activeRoleId: payload.activeRoleId },
+      process.env.JWT_SECRET,
+      { expiresIn: TOKEN_EXPIRATION.ACCESS }
+    );
+
+    res.json({ accessToken });
+  } catch (error) {
+    res.status(401).json({ message: 'Invalid token' });
+  }
 };
 
 // --- GESTIÓN DE ROL ACTIVO Y MENÚS ---
