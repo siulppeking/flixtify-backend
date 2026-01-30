@@ -27,7 +27,7 @@ const SUCCESS_MESSAGES = {
  * @param {string} ownerId - The owner ID to validate against
  * @returns {Promise<Object|null>} Task object if valid, null otherwise
  */
-const checkTaskOwnership = async (taskId, ownerId) => {
+const validateTaskOwnership = async (taskId, ownerId) => {
   try {
     const task = await Task.findById(taskId).populate({
       path: 'projectId',
@@ -112,7 +112,7 @@ exports.getAllTasks = async (req, res) => {
 exports.getTaskById = async (req, res) => {
     try {
         const ownerId = req.user.id;
-        const task = await checkTaskOwnership(req.params.id, ownerId);
+        const task = await validateTaskOwnership(req.params.id, ownerId);
 
         if (!task) {
             return res.status(404).json({ message: ERROR_MESSAGES.TASK_NOT_FOUND });
@@ -141,7 +141,7 @@ exports.updateTask = async (req, res) => {
         const updates = req.body;
 
         // 1. Verificar propiedad antes de actualizar
-        const task = await checkTaskOwnership(taskId, ownerId);
+        const task = await validateTaskOwnership(taskId, ownerId);
         if (!task) {
             return res.status(404).json({ message: ERROR_MESSAGES.TASK_NOT_FOUND });
         }
@@ -168,7 +168,7 @@ exports.deleteTask = async (req, res) => {
         const taskId = req.params.id;
 
         // 1. Verificar propiedad antes de eliminar
-        const task = await checkTaskOwnership(taskId, ownerId);
+        const task = await validateTaskOwnership(taskId, ownerId);
         if (!task) {
             return res.status(404).json({ message: ERROR_MESSAGES.TASK_NOT_FOUND });
         }
