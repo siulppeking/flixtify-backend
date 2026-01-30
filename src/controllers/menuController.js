@@ -96,60 +96,60 @@ exports.updateMenu = async (req, res) => {
     const { name, icon, path, type, parent } = req.body;
 
     const updatedMenu = await Menu.findByIdAndUpdate(
-            req.params.id,
-            { name, icon, path, type, parent: parent || null },
-            { new: true, runValidators: true }
-        );
+      req.params.id,
+      { name, icon, path, type, parent: parent || null },
+      { new: true, runValidators: true }
+    );
 
-        if (!updatedMenu) {
-            return res.status(404).json({ message: ERROR_MESSAGES.MENU_NOT_FOUND_UPDATE });
-        }
-
-        // Opcional: Validar que el nuevo padre no sea el propio elemento, previniendo bucles
-        if (updatedMenu._id.toString() === updatedMenu.parent?.toString()) {
-            return res.status(400).json({ message: ERROR_MESSAGES.SELF_PARENT });
-        }
-
-        res.json({
-            message: SUCCESS_MESSAGES.MENU_UPDATED,
-            menu: updatedMenu
-        });
-    } catch (error) {
-        console.error("Error updating menu:", error);
-        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_UPDATE });
+    if (!updatedMenu) {
+      return res.status(404).json({ message: ERROR_MESSAGES.MENU_NOT_FOUND_UPDATE });
     }
+
+    // Opcional: Validar que el nuevo padre no sea el propio elemento, previniendo bucles
+    if (updatedMenu._id.toString() === updatedMenu.parent?.toString()) {
+      return res.status(400).json({ message: ERROR_MESSAGES.SELF_PARENT });
+    }
+
+    res.json({
+      message: SUCCESS_MESSAGES.MENU_UPDATED,
+      menu: updatedMenu
+    });
+  } catch (error) {
+    console.error('Error updating menu:', error);
+    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_UPDATE });
+  }
 };
 
 // --- Función 5: Eliminar un Menú (Delete) ---
 // Debe verificar si otros menús lo usan como padre y limpiar la tabla de enlace RoleMenu
 exports.deleteMenu = async (req, res) => {
-    try {
-        const menuId = req.params.id;
+  try {
+    const menuId = req.params.id;
 
-        const menu = await Menu.findById(menuId);
-        if (!menu) {
-            return res.status(404).json({ message: ERROR_MESSAGES.MENU_NOT_FOUND_DELETE });
-        }
-
-        // 1. Verificar dependencias de hijos: ¿Otros menús lo usan como padre?
-        const childMenus = await Menu.countDocuments({ parent: menuId });
-        if (childMenus > 0) {
-            return res.status(400).json({
-                message: `${ERROR_MESSAGES.HAS_CHILDREN}. ${childMenus} children are currently linked to it.`
-            });
-        }
-
-        // 2. Eliminar todas las relaciones en RoleMenu (permisos)
-        await RoleMenu.deleteMany({ menuId });
-
-        // 3. Eliminar el documento Menu
-        await Menu.deleteOne({ _id: menuId });
-
-        res.json({
-            message: SUCCESS_MESSAGES.MENU_DELETED
-        });
-    } catch (error) {
-        console.error("Error deleting menu:", error);
-        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_DELETE });
+    const menu = await Menu.findById(menuId);
+    if (!menu) {
+      return res.status(404).json({ message: ERROR_MESSAGES.MENU_NOT_FOUND_DELETE });
     }
+
+    // 1. Verificar dependencias de hijos: ¿Otros menús lo usan como padre?
+    const childMenus = await Menu.countDocuments({ parent: menuId });
+    if (childMenus > 0) {
+      return res.status(400).json({
+        message: `${ERROR_MESSAGES.HAS_CHILDREN}. ${childMenus} children are currently linked to it.`
+      });
+    }
+
+    // 2. Eliminar todas las relaciones en RoleMenu (permisos)
+    await RoleMenu.deleteMany({ menuId });
+
+    // 3. Eliminar el documento Menu
+    await Menu.deleteOne({ _id: menuId });
+
+    res.json({
+      message: SUCCESS_MESSAGES.MENU_DELETED
+    });
+  } catch (error) {
+    console.error('Error deleting menu:', error);
+    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_DELETE });
+  }
 };
