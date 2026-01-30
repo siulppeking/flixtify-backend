@@ -9,8 +9,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
-const httpStatus = require('../constants/httpStatus');
-const errorMessages = require('../constants/errorMessages');
 
 // Security and Authentication Constants
 const BCRYPT_SALT_ROUNDS = 10;
