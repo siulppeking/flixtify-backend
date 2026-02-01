@@ -2,6 +2,8 @@
 
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 
+El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
+
 ## [Unreleased]
 - Actualizar y detallar cambios a medida que se publiquen.
 
