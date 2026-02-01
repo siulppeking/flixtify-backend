@@ -1,6 +1,7 @@
 /**
  * HTTP Status Code Constants
  * Centralized definitions for all HTTP status codes used across the API
+ * Standard codes: 2xx (success), 4xx (client error), 5xx (server error)
  */
 
 module.exports = {
