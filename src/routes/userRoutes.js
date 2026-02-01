@@ -2,39 +2,42 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
-const auth = require('../middlewares/authMiddleware'); // Middleware de autenticación
-// Asumiendo que tienes un middleware para verificar roles de administrador
-//const { checkAdminRole } = require('../middlewares/authMiddleware');
-// Opcional: Si tienes validaciones específicas para el registro o actualización
-// const { validateUserRegistration, validateUserUpdate } = require('../validators/userValidator'); 
+const auth = require('../middlewares/authMiddleware');
 
-// --- Rutas de Usuario (CRUD) ---
+// Route path constants
+const ROUTE_PATHS = {
+  ROOT: '/',
+  BY_ID: '/:id'
+};
 
-// 1. Registro (CREATE) - Generalmente no requiere autenticación
-router.post('/',
-    // validateUserRegistration, // <--- Opcional: Agregar validación
-    userController.createUser
-);
+/**
+ * POST /api/users - Create new user
+ * @description Register a new user account
+ */
+router.post(ROUTE_PATHS.ROOT, userController.createUser);
 
-// Rutas base: /api/users
-router.route('/')
-    // GET (READ All) - Requiere autenticación y rol de administrador para ver la lista completa
-    .get(userController.getAllUsers);
+/**
+ * GET /api/users - Get all users
+ * @description Retrieve list of all users (requires authentication)
+ */
+router.get(ROUTE_PATHS.ROOT, userController.getAllUsers);
 
-// Rutas por ID: /api/users/:id
-router.route('/:id')
-    // GET (READ One) - Requiere autenticación
-    // NOTA: El controlador debe verificar si el usuario es Admin O si está solicitando su propio ID.
-    .get(userController.getUserById)
+/**
+ * GET /api/users/:id - Get user by ID
+ * @description Retrieve a single user by ID (admin or own profile)
+ */
+router.get(ROUTE_PATHS.BY_ID, userController.getUserById);
 
-    // PUT (UPDATE) - Requiere autenticación
-    // NOTA: Similar al GET, debe verificar si el usuario es Admin O si está actualizando su propio ID.
-    .put(
-        // validateUserUpdate, // <--- Opcional: Agregar validación
-        userController.updateUser
-    )
+/**
+ * PUT /api/users/:id - Update user
+ * @description Update user information (admin or own profile)
+ */
+router.put(ROUTE_PATHS.BY_ID, userController.updateUser);
 
-    // DELETE (Soft Delete) - Requiere autenticación y, generalmente, rol de administrador
-    .delete(userController.deleteUser);
+/**
+ * DELETE /api/users/:id - Delete user (soft delete)
+ * @description Soft delete a user account (admin or own profile)
+ */
+router.delete(ROUTE_PATHS.BY_ID, userController.deleteUser);
 
 module.exports = router;
