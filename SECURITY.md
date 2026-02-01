@@ -1,8 +1,12 @@
-# Security Policy
+# Política de Seguridad
 
-## Supported Versions
+## Versiones Compatibles
 
-We support the latest `main` branch.
+Actualmente damos soporte a la rama `main` del proyecto.
+
+| Versión | Estado |
+|---------|--------|
+| main    | ✅ Soportada |
 
 ## Reporting a Vulnerability
 
