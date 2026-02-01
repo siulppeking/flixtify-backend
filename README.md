@@ -39,15 +39,15 @@ URL_MONGODB=tu_url_de_mongodb
 PORT=3000
 ```
 
-## Uso
+## Uso / Ejecución
 
-### Desarrollo
+### Modo Desarrollo
 ```bash
 npm run dev
 ```
 Inicia el servidor con nodemon, que se reinicia automáticamente al detectar cambios.
 
-### Producción
+### Modo Producción
 ```bash
 npm start
 ```
