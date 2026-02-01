@@ -14,7 +14,9 @@
     "backend",
     "api",
     "express",
-    "mongodb"
+    "mongodb",
+    "authentication",
+    "role-based-access-control"
   ],
   "author": "Flixtify Team",
   "license": "ISC",
