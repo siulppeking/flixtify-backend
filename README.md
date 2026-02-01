@@ -62,12 +62,15 @@ Inicia el servidor en modo producción optimizado.
 
 ## Tecnologías
 
-- [Express](https://expressjs.com/) - Framework web
-- [MongoDB](https://www.mongodb.com/) - Base de datos
-- [Mongoose](https://mongoosejs.com/) - ODM para MongoDB
+- [Express](https://expressjs.com/) - Framework web Node.js minimalista
+- [MongoDB](https://www.mongodb.com/) - Base de datos NoSQL escalable
+- [Mongoose](https://mongoosejs.com/) - ODM (Object Data Modeling) para MongoDB
+- [JWT](https://jwt.io/) - Autenticación basada en tokens JSON Web Tokens
+- [Speakeasy](https://github.com/speakeasyjs/speakeasy) - TOTP para autenticación 2FA
+- [bcryptjs](https://www.npmjs.com/package/bcryptjs) - Hash seguro de contraseñas
 - [Morgan](https://github.com/expressjs/morgan) - HTTP request logger
-- [Nodemon](https://nodemon.io/) - Monitor de cambios para desarrollo
-- [dotenv](https://github.com/motdotla/dotenv) - Variables de entorno
+- [Nodemon](https://nodemon.io/) - Monitor automático de cambios para desarrollo
+- [dotenv](https://github.com/motdotla/dotenv) - Gestión de variables de entorno
 
 ## API Docs (Swagger)
 
