@@ -1,6 +1,13 @@
 # Guía de Contribución
 
-¡Gracias por tu interés en contribuir! Nos encanta recibir mejoras y reportes de bugs.
+¡Gracias por tu interés en contribuir! Nos encanta recibir mejoras, reportes de bugs y feedback.
+
+## Consideraciones Importantes
+
+- No comprometas secretos o credenciales.
+- Sigue las convenciones de código existentes.
+- Escribe commits claros y descriptivos.
+- Prueba tu código antes de hacer push.
 
 ## Requisitos / Setup
 - Usa Node.js 20.x (ver `.nvmrc`).
