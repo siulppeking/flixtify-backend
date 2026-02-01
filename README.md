@@ -55,8 +55,10 @@ Inicia el servidor en modo producción.
 
 ## Scripts disponibles
 
-- `npm run dev` - Inicia el servidor en modo desarrollo con nodemon
+- `npm run dev` - Inicia el servidor en modo desarrollo con nodemon para reload automático
 - `npm start` - Inicia el servidor en modo producción
+- `npm run lint` - Ejecuta ESLint para análisis estático del código
+- `npm run format` - Formatea el código con Prettier
 
 ## Tecnologías
 
