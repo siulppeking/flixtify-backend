@@ -28,20 +28,20 @@ cd flixtify-backend
 npm install
 ```
 
-3. Crear archivo `.env`:
+3. Crear archivo `.env` desde el template:
 ```bash
 cp .env.example .env
 ```
 
-4. Completar las variables de entorno en `.env`:
-```
-URL_MONGODB=tu_url_de_mongodb
-PORT=3000
+4. Completar las variables de entorno en `.env` con tus valores:
+```bash
+# Edita .env con tus credenciales de MongoDB y secretos JWT
+nano .env
 ```
 
 ## Uso / Ejecución
 
-### Modo Desarrollo
+### Modo Desarrollo (con Hot Reload)
 ```bash
 npm run dev
 ```
@@ -51,7 +51,7 @@ Inicia el servidor con nodemon, que se reinicia automáticamente al detectar cam
 ```bash
 npm start
 ```
-Inicia el servidor en modo producción.
+Inicia el servidor en modo producción optimizado.
 
 ## Scripts disponibles
 
