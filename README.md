@@ -12,8 +12,9 @@ Backend API de la aplicación Flixtify construido con Express, MongoDB y Node.js
 
 ## Requisitos
 
-- Node.js v16 o superior
-- MongoDB Atlas cuenta activa
+- Node.js v20.x (verificar con `.nvmrc`)
+- MongoDB Atlas cuenta activa o instancia local de MongoDB
+- npm o yarn instalado
 
 ## Instalación
 
