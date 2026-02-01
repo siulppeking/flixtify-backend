@@ -4,13 +4,40 @@ const router = express.Router();
 const taskController = require('../controllers/taskController');
 const auth = require('../middlewares/authMiddleware');
 
-router.route('/')
-  .post(auth, taskController.createTask)
-  .get(auth, taskController.getAllTasks);
+// Route path constants
+const TASK_ROUTES = {
+  ROOT: '/',
+  BY_ID: '/:id'
+};
 
-router.route('/:id')
-  .get(auth, taskController.getTaskById)
-  .put(auth, taskController.updateTask)
-  .delete(auth, taskController.deleteTask);
+/**
+ * POST /api/tasks - Create new task
+ * @description Create a new task (requires authentication)
+ */
+router.post(TASK_ROUTES.ROOT, auth, taskController.createTask);
+
+/**
+ * GET /api/tasks - Get all tasks
+ * @description Retrieve all tasks (requires authentication)
+ */
+router.get(TASK_ROUTES.ROOT, auth, taskController.getAllTasks);
+
+/**
+ * GET /api/tasks/:id - Get task by ID
+ * @description Retrieve a single task by ID (requires authentication)
+ */
+router.get(TASK_ROUTES.BY_ID, auth, taskController.getTaskById);
+
+/**
+ * PUT /api/tasks/:id - Update task
+ * @description Update task information (requires authentication)
+ */
+router.put(TASK_ROUTES.BY_ID, auth, taskController.updateTask);
+
+/**
+ * DELETE /api/tasks/:id - Delete task
+ * @description Delete a task (requires authentication)
+ */
+router.delete(TASK_ROUTES.BY_ID, auth, taskController.deleteTask);
 
 module.exports = router;
