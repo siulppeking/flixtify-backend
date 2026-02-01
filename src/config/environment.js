@@ -1,6 +1,7 @@
 /**
  * Environment Configuration Constants
  * Centralized environment variables with defaults and validation
+ * Manages all configuration settings from .env and defaults
  */
 
 module.exports = {
