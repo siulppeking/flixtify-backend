@@ -1,6 +1,7 @@
 /**
  * Error Messages Constants
  * Centralized definitions for all common error messages across the API
+ * Ensures consistency in error communication with clients
  */
 
 module.exports = {
