@@ -5,12 +5,34 @@ const userManagementController = require('../controllers/userManagementControlle
 const auth = require('../middlewares/authMiddleware');
 const checkAdmin = require('../middlewares/checkAdmin');
 
-router.route('/')
-  .get(auth, checkAdmin, userManagementController.getAllUsers);
+// Route path constants
+const USER_MGMT_ROUTES = {
+  ROOT: '/',
+  BY_ID: '/:id'
+};
 
-router.route('/:id')
-  .get(auth, checkAdmin, userManagementController.getUserById)
-  .put(auth, checkAdmin, userManagementController.updateUser)
-  .delete(auth, checkAdmin, userManagementController.deleteUser);
+/**
+ * GET /api/user-management - Get all users
+ * @description Retrieve all users (requires authentication and admin privilege)
+ */
+router.get(USER_MGMT_ROUTES.ROOT, auth, checkAdmin, userManagementController.getAllUsers);
+
+/**
+ * GET /api/user-management/:id - Get user by ID
+ * @description Retrieve a single user by ID (requires authentication and admin privilege)
+ */
+router.get(USER_MGMT_ROUTES.BY_ID, auth, checkAdmin, userManagementController.getUserById);
+
+/**
+ * PUT /api/user-management/:id - Update user
+ * @description Update user information (requires authentication and admin privilege)
+ */
+router.put(USER_MGMT_ROUTES.BY_ID, auth, checkAdmin, userManagementController.updateUser);
+
+/**
+ * DELETE /api/user-management/:id - Delete user
+ * @description Delete a user account (requires authentication and admin privilege)
+ */
+router.delete(USER_MGMT_ROUTES.BY_ID, auth, checkAdmin, userManagementController.deleteUser);
 
 module.exports = router;
