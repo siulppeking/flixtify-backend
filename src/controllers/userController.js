@@ -82,66 +82,66 @@ exports.updateUser = async (req, res) => {
 
     if (!isUserOwner(requestingUserId, userId)) {
       return res.status(403).json({ message: 'Access denied to update this profile' });
-        }
-
-        // 1. Evitar que se actualicen campos sensibles directamente
-        delete updates.password;
-        delete updates.twoFAEnabled;
-        delete updates.twoFAVerifiedSession;
-        delete updates.loginAttempts;
-        delete updates.deleted;
-
-        // 2. Actualizar el usuario
-        const updatedUser = await User.findOneAndUpdate(
-            { _id: userId, deleted: false },
-            updates,
-            { new: true, runValidators: true }
-        ).select(USER_PROJECTION);
-
-        if (!updatedUser) {
-            return res.status(404).json({ message: "Usuario no encontrado o acceso denegado." });
-        }
-
-        res.json({
-            message: "Usuario actualizado con éxito.",
-            user: updatedUser
-        });
-    } catch (error) {
-        if (error.code === 11000) {
-            return res.status(400).json({ message: "Nombre de usuario o correo ya en uso." });
-        }
-        console.error("Error actualizando usuario:", error);
-        res.status(500).json({ message: "Error del servidor al actualizar usuario." });
     }
+
+    // 1. Evitar que se actualicen campos sensibles directamente
+    delete updates.password;
+    delete updates.twoFAEnabled;
+    delete updates.twoFAVerifiedSession;
+    delete updates.loginAttempts;
+    delete updates.deleted;
+
+    // 2. Actualizar el usuario
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId, deleted: false },
+      updates,
+      { new: true, runValidators: true }
+    ).select(USER_PROJECTION);
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'Usuario no encontrado o acceso denegado.' });
+    }
+
+    res.json({
+      message: 'Usuario actualizado con éxito.',
+      user: updatedUser
+    });
+  } catch (error) {
+    if (error.code === 11000) {
+      return res.status(400).json({ message: 'Nombre de usuario o correo ya en uso.' });
+    }
+    console.error('Error actualizando usuario:', error);
+    res.status(500).json({ message: 'Error del servidor al actualizar usuario.' });
+  }
 };
 
 // DELETE /api/users/:id (Soft Delete - Admin Only)
 exports.deleteUser = async (req, res) => {
-    try {
-        const userId = req.params.id;
+  try {
+    const userId = req.params.id;
 
-        // 1. Marcar el usuario como eliminado y deshabilitado
-        const deletedUser = await User.findOneAndUpdate(
-            { _id: userId, deleted: false },
-            { deleted: true, enabled: false },
-            { new: true }
-        );
+    // 1. Marcar el usuario como eliminado y deshabilitado
+    const deletedUser = await User.findOneAndUpdate(
+      { _id: userId, deleted: false },
+      { deleted: true, enabled: false },
+      { new: true }
+    );
 
-        if (!deletedUser) {
-            return res.status(404).json({ message: "Usuario no encontrado o ya eliminado." });
-        }
-
-        // 2. Deshabilitar/Eliminar métodos 2FA asociados (Soft Delete)
-        await TwoFAMethod.updateMany(
-            { userId: userId, deleted: false },
-            { deleted: true, isEnabled: false }
-        );
-
-        res.json({ message: "Usuario y sus métodos 2FA asociados marcados como eliminados con éxito." });
-    } catch (error) {
-        console.error("Error marcando usuario como eliminado:", error);
-        res.status(500).json({ message: "Error del servidor al marcar usuario como eliminado." });
+    if (!deletedUser) {
+      return res.status(404).json({ message: 'Usuario no encontrado o ya eliminado.' });
     }
+
+    // 2. Deshabilitar/Eliminar métodos 2FA asociados (Soft Delete)
+    await TwoFAMethod.updateMany(
+      { userId: userId, deleted: false },
+      { deleted: true, isEnabled: false }
+    );
+
+    res.json({ message: 'Usuario y sus métodos 2FA asociados marcados como eliminados con éxito.' });
+  } catch (error) {
+    console.error('Error marcando usuario como eliminado:', error);
+    res.status(500).json({ message: 'Error del servidor al marcar usuario como eliminado.' });
+  }
 };
 
 // -------------------------------------------------------------------
