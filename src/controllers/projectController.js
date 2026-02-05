@@ -25,7 +25,7 @@ const SUCCESS_MESSAGES = {
  * @returns {Promise<Object|null>} Project object if found and owned, null otherwise
  */
 const validateProjectOwnership = async (projectId, ownerId) => {
-  return await Project.findOne({ _id: projectId, ownerId });
+  return Project.findOne({ _id: projectId, ownerId });
 };
 
 /**
