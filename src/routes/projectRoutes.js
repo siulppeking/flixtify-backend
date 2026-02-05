@@ -11,34 +11,36 @@ const PROJECT_ROUTES = {
   BY_ID: '/:id'
 };
 
+const { ROOT, BY_ID } = PROJECT_ROUTES;
+
 /**
  * POST /api/projects - Create new project
  * @description Create a new project (requires authentication)
  */
-router.post(PROJECT_ROUTES.ROOT, auth, validateProjectCreation, projectController.createProject);
+router.post(ROOT, auth, validateProjectCreation, projectController.createProject);
 
 /**
  * GET /api/projects - Get all projects
  * @description Retrieve all projects (requires authentication)
  */
-router.get(PROJECT_ROUTES.ROOT, auth, projectController.getAllProjects);
+router.get(ROOT, auth, projectController.getAllProjects);
 
 /**
  * GET /api/projects/:id - Get project by ID
  * @description Retrieve a single project by ID (requires authentication)
  */
-router.get(PROJECT_ROUTES.BY_ID, auth, projectController.getProjectById);
+router.get(BY_ID, auth, projectController.getProjectById);
 
 /**
  * PUT /api/projects/:id - Update project
  * @description Update project information (requires authentication)
  */
-router.put(PROJECT_ROUTES.BY_ID, auth, projectController.updateProject);
+router.put(BY_ID, auth, projectController.updateProject);
 
 /**
  * DELETE /api/projects/:id - Delete project
  * @description Delete a project (requires authentication)
  */
-router.delete(PROJECT_ROUTES.BY_ID, auth, projectController.deleteProject);
+router.delete(BY_ID, auth, projectController.deleteProject);
 
 module.exports = router;
