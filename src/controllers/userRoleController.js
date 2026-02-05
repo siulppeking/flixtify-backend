@@ -84,24 +84,24 @@ exports.revokeRoleFromUser = async (req, res) => {
     const { userId, roleId } = req.params;
 
     const activeAssignment = await UserRole.findOne({ userId, roleId, isActive: true });
-        if (activeAssignment) {
-            return res.status(400).json({
-                message: ERROR_MESSAGES.ACTIVE_ROLE_ERROR
-            });
-        }
-
-        // 2. Eliminar el enlace
-        const result = await UserRole.deleteOne({ userId, roleId });
-
-        if (result.deletedCount === 0) {
-            return res.status(404).json({ message: ERROR_MESSAGES.ASSIGNMENT_NOT_FOUND });
-        }
-
-        res.json({ message: SUCCESS_MESSAGES.ROLE_REVOKED });
-    } catch (error) {
-        console.error("Error revoking role from user:", error);
-        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_REVOKE });
+    if (activeAssignment) {
+      return res.status(400).json({
+        message: ERROR_MESSAGES.ACTIVE_ROLE_ERROR
+      });
     }
+
+    // 2. Eliminar el enlace
+    const result = await UserRole.deleteOne({ userId, roleId });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: ERROR_MESSAGES.ASSIGNMENT_NOT_FOUND });
+    }
+
+    res.json({ message: SUCCESS_MESSAGES.ROLE_REVOKED });
+  } catch (error) {
+    console.error('Error revoking role from user:', error);
+    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_REVOKE });
+  }
 };
 
 // --- Get Roles Assigned to a User (Read By User) ---
@@ -113,18 +113,18 @@ exports.revokeRoleFromUser = async (req, res) => {
  * @returns {Promise<void>}
  */
 exports.getRolesByUser = async (req, res) => {
-    try {
-        const userId = req.params.userId;
+  try {
+    const userId = req.params.userId;
 
-        // 1. Encontrar todos los enlaces para ese User
-        const assignments = await UserRole.find({ userId }).populate('roleId');
+    // 1. Encontrar todos los enlaces para ese User
+    const assignments = await UserRole.find({ userId }).populate('roleId');
 
-        // 2. Mapear para devolver los detalles del rol, incluyendo si está activo
-        const roles = assignments.map(formatRoleAssignment);
+    // 2. Mapear para devolver los detalles del rol, incluyendo si está activo
+    const roles = assignments.map(formatRoleAssignment);
 
-        res.json(roles);
-    } catch (error) {
-        console.error("Error fetching roles by user:", error);
-        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH });
-    }
+    res.json(roles);
+  } catch (error) {
+    console.error('Error fetching roles by user:', error);
+    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH });
+  }
 };
