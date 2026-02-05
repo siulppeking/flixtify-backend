@@ -175,7 +175,7 @@ exports.enrollTOTP = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error al iniciar el registro de 2FA:", error);
+        console.error('Error al iniciar el registro de 2FA:', error);
         res.status(500).json({ message: "Error del servidor al registrar 2FA." });
     }
 };
@@ -215,7 +215,7 @@ exports.verifyTOTP = async (req, res) => {
 
         res.json({ message: 'Verificación TOTP exitosa. 2FA habilitado.' });
     } catch (error) {
-        console.error("Error al verificar 2FA:", error);
+        console.error('Error al verificar 2FA:', error);
         res.status(500).json({ message: "Error del servidor al verificar 2FA." });
     }
 };
@@ -230,7 +230,7 @@ exports.list2FAMethods = async (req, res) => {
 
         res.json(methods);
     } catch (error) {
-        console.error("Error al listar métodos 2FA:", error);
+        console.error('Error al listar métodos 2FA:', error);
         res.status(500).json({ message: "Error del servidor al listar métodos 2FA." });
     }
 };
@@ -262,7 +262,7 @@ exports.setActive2FAMethod = async (req, res) => {
 
         res.json({ message: 'Método 2FA activo cambiado con éxito.', method: updatedMethod });
     } catch (error) {
-        console.error("Error al establecer método 2FA activo:", error);
+        console.error('Error al establecer método 2FA activo:', error);
         res.status(500).json({ message: "Error del servidor al establecer método 2FA activo." });
     }
 };
@@ -298,7 +298,7 @@ exports.delete2FAMethod = async (req, res) => {
 
         res.json({ message: 'Método 2FA eliminado con éxito.' });
     } catch (error) {
-        console.error("Error al eliminar método 2FA:", error);
+        console.error('Error al eliminar método 2FA:', error);
         res.status(500).json({ message: "Error del servidor al eliminar método 2FA." });
     }
 };
