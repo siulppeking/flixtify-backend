@@ -25,16 +25,12 @@ const SUCCESS_MESSAGES = {
  * Validates that both roleId and menuId exist in database
  * @param {string} roleId - The role ID to validate
  * @param {string} menuId - The menu ID to validate
- * @returns {Promise<Object>} Object with { role, menu, valid: boolean }
+ * @returns {Promise<boolean>} True if both role and menu exist
  */
 const validateRoleAndMenu = async (roleId, menuId) => {
   const role = await Role.findById(roleId);
   const menu = await Menu.findById(menuId);
-  return {
-    role,
-    menu,
-    valid: !!(role && menu)
-  };
+  return !!(role && menu);
 };
 
 exports.assignMenuToRole = async (req, res) => {
@@ -50,8 +46,8 @@ exports.assignMenuToRole = async (req, res) => {
       return res.status(400).json({ message: ERROR_MESSAGES.MENU_ALREADY_ASSIGNED });
     }
 
-    const { valid } = await validateRoleAndMenu(roleId, menuId);
-    if (!valid) {
+    const isValid = await validateRoleAndMenu(roleId, menuId);
+    if (!isValid) {
       return res.status(404).json({ message: ERROR_MESSAGES.INVALID_IDS });
     }
 
