@@ -75,18 +75,18 @@ exports.revokeMenuFromRole = async (req, res) => {
       return res.status(400).json({ message: ERROR_MESSAGES.REQUIRED_PARAMS });
     }
 
-        // 1. Eliminar el enlace
-        const result = await RoleMenu.deleteOne({ roleId, menuId });
+    // 1. Eliminar el enlace
+    const result = await RoleMenu.deleteOne({ roleId, menuId });
 
-        if (result.deletedCount === 0) {
-            return res.status(404).json({ message: ERROR_MESSAGES.ASSIGNMENT_NOT_FOUND });
-        }
-
-        res.json({ message: SUCCESS_MESSAGES.MENU_REVOKED });
-    } catch (error) {
-        console.error("Error revoking menu from role:", error);
-        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_REVOKE });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: ERROR_MESSAGES.ASSIGNMENT_NOT_FOUND });
     }
+
+    res.json({ message: SUCCESS_MESSAGES.MENU_REVOKED });
+  } catch (error) {
+    console.error('Error revoking menu from role:', error);
+    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_REVOKE });
+  }
 };
 
 // --- Get Menus Assigned to a Role (Read By Role) ---
@@ -98,18 +98,18 @@ exports.revokeMenuFromRole = async (req, res) => {
  * @returns {Promise<void>}
  */
 exports.getMenusByRole = async (req, res) => {
-    try {
-        const roleId = req.params.roleId;
+  try {
+    const roleId = req.params.roleId;
 
-        // 1. Encontrar todos los enlaces para ese Role
-        const assignments = await RoleMenu.find({ roleId }).populate('menuId');
+    // 1. Encontrar todos los enlaces para ese Role
+    const assignments = await RoleMenu.find({ roleId }).populate('menuId');
 
-        // 2. Mapear para devolver solo los detalles del menú
-        const menus = assignments.map(a => a.menuId).filter(menu => menu !== null);
+    // 2. Mapear para devolver solo los detalles del menú
+    const menus = assignments.map(a => a.menuId).filter(menu => menu !== null);
 
-        res.json(menus);
-    } catch (error) {
-        console.error("Error fetching menus by role:", error);
-        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH });
-    }
+    res.json(menus);
+  } catch (error) {
+    console.error('Error fetching menus by role:', error);
+    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH });
+  }
 };
