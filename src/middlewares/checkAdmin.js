@@ -1,7 +1,7 @@
 // Admin Check Middleware - Verifies user has admin role for protected routes
 const Role = require('../models/Role');
-const httpStatus = require('../constants/httpStatus');
 const errorMessages = require('../constants/errorMessages');
+const httpStatus = require('../constants/httpStatus');
 
 // Constants for admin verification
 const ADMIN_VERIFICATION_CONFIG = {
