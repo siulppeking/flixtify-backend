@@ -118,14 +118,14 @@ exports.updateProject = async (req, res) => {
     if (!updatedProject) {
       return res.status(404).json({ message: ERROR_MESSAGES.PROJECT_NOT_FOUND });
     }
-        res.json({
-            message: SUCCESS_MESSAGES.PROJECT_UPDATED,
-            project: updatedProject
-        });
-    } catch (error) {
-        console.error("Error updating project:", error);
-        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_UPDATE });
-    }
+    res.json({
+      message: SUCCESS_MESSAGES.PROJECT_UPDATED,
+      project: updatedProject
+    });
+  } catch (error) {
+    console.error('Error updating project:', error);
+    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_UPDATE });
+  }
 };
 
 /**
@@ -135,23 +135,23 @@ exports.updateProject = async (req, res) => {
  * @returns {Promise<void>}
  */
 exports.deleteProject = async (req, res) => {
-    try {
-        const ownerId = req.user.id;
-        const projectId = req.params.id;
+  try {
+    const ownerId = req.user.id;
+    const projectId = req.params.id;
 
-        // 1. Intentar eliminar el proyecto (filtando por dueño)
-        const projectResult = await Project.deleteOne({ _id: projectId, ownerId });
+    // 1. Intentar eliminar el proyecto (filtando por dueño)
+    const projectResult = await Project.deleteOne({ _id: projectId, ownerId });
 
-        if (projectResult.deletedCount === 0) {
-            return res.status(404).json({ message: ERROR_MESSAGES.PROJECT_NOT_FOUND });
-        }
-
-        // 2. Eliminar todas las tareas asociadas a ese proyecto (limpieza en cascada)
-        await Task.deleteMany({ projectId });
-
-        res.json({ message: SUCCESS_MESSAGES.PROJECT_DELETED });
-    } catch (error) {
-        console.error("Error deleting project:", error);
-        res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_DELETE });
+    if (projectResult.deletedCount === 0) {
+      return res.status(404).json({ message: ERROR_MESSAGES.PROJECT_NOT_FOUND });
     }
+
+    // 2. Eliminar todas las tareas asociadas a ese proyecto (limpieza en cascada)
+    await Task.deleteMany({ projectId });
+
+    res.json({ message: SUCCESS_MESSAGES.PROJECT_DELETED });
+  } catch (error) {
+    console.error('Error deleting project:', error);
+    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_DELETE });
+  }
 };
