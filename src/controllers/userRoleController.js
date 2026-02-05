@@ -25,16 +25,12 @@ const SUCCESS_MESSAGES = {
  * Validates that both userId and roleId exist in database
  * @param {string} userId - The user ID to validate
  * @param {string} roleId - The role ID to validate
- * @returns {Promise<Object>} Object with { user, role, valid: boolean }
+ * @returns {Promise<boolean>} True if both user and role exist
  */
 const validateUserAndRole = async (userId, roleId) => {
   const user = await User.findById(userId);
   const role = await Role.findById(roleId);
-  return {
-    user,
-    role,
-    valid: !!(user && role)
-  };
+  return !!(user && role);
 };
 
 /**
@@ -62,8 +58,8 @@ exports.assignRoleToUser = async (req, res) => {
       return res.status(400).json({ message: ERROR_MESSAGES.ROLE_ALREADY_ASSIGNED });
     }
 
-    const { valid } = await validateUserAndRole(userId, roleId);
-    if (!valid) {
+    const isValid = await validateUserAndRole(userId, roleId);
+    if (!isValid) {
       return res.status(404).json({ message: ERROR_MESSAGES.INVALID_IDS });
     }
 
