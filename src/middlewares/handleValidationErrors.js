@@ -19,10 +19,11 @@ const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
+    const errorList = errors.array();
     return res.status(VALIDATION_RESPONSE.STATUS).json({
       status: VALIDATION_RESPONSE.STATUS,
       message: VALIDATION_RESPONSE.MESSAGE,
-      errors: errors.array()
+      errors: errorList
     });
   }
 
