@@ -1,6 +1,5 @@
 const User = require('../models/User');
 const TwoFAMethod = require('../models/TwoFAMethod');
-const bcrypt = require('bcryptjs');
 
 const USER_PROJECTION = '-password -twoFAVerifiedSession';
 
