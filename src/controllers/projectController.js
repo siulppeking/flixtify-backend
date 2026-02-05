@@ -2,9 +2,6 @@
 const Project = require('../models/Project');
 const Task = require('../models/Task');
 
-const PROJECT_PROJECTION = '-__v';
-const TASK_PROJECTION = '-__v';
-
 // Constants
 const ERROR_MESSAGES = {
   PROJECT_NOT_FOUND: 'Project not found or access denied',
