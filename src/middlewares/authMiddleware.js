@@ -42,7 +42,7 @@ const verifyToken = (token) => {
  */
 const auth = async (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
+    const { authorization: authHeader } = req.headers;
     if (!authHeader) {
       return res.status(httpStatus.UNAUTHORIZED).json({ message: errorMessages.MISSING_AUTHORIZATION_HEADER });
     }
