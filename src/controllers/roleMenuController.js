@@ -95,7 +95,7 @@ exports.revokeMenuFromRole = async (req, res) => {
  */
 exports.getMenusByRole = async (req, res) => {
   try {
-    const roleId = req.params.roleId;
+    const { roleId } = req.params;
 
     // 1. Encontrar todos los enlaces para ese Role
     const assignments = await RoleMenu.find({ roleId }).populate('menuId');
