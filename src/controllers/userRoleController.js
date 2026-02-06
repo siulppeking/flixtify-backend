@@ -110,7 +110,7 @@ exports.revokeRoleFromUser = async (req, res) => {
  */
 exports.getRolesByUser = async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const { userId } = req.params;
 
     // 1. Encontrar todos los enlaces para ese User
     const assignments = await UserRole.find({ userId }).populate('roleId');
