@@ -101,7 +101,7 @@ exports.updateRole = async (req, res) => {
 // **IMPORTANTE:** Debe verificar y limpiar las referencias en las tablas de enlace.
 exports.deleteRole = async (req, res) => {
   try {
-    const roleId = req.params.id;
+    const { id: roleId } = req.params;
 
     const role = await Role.findById(roleId);
     if (!role) {
