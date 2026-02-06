@@ -117,8 +117,8 @@ exports.updateUser = async (req, res) => {
 // DELETE /admin/users/:id
 exports.deleteUser = async (req, res) => {
   try {
-    const adminId = req.user.id;
-    const targetUserId = req.params.id;
+    const { id: adminId } = req.user;
+    const { id: targetUserId } = req.params;
 
     // PRECAUCIÓN: Impedir que un administrador se elimine a sí mismo
     if (adminId === targetUserId) {
