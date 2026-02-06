@@ -36,7 +36,8 @@ exports.getAllRoles = async (req, res) => {
 
 exports.getRoleById = async (req, res) => {
   try {
-    const role = await Role.findById(req.params.id);
+    const { id: roleId } = req.params;
+    const role = await Role.findById(roleId);
     if (!role) {
       return res.status(404).json({ message: ERROR_MESSAGES.ROLE_NOT_FOUND });
     }
@@ -73,10 +74,11 @@ exports.createRole = async (req, res) => {
 
 exports.updateRole = async (req, res) => {
   try {
+    const { id: roleId } = req.params;
     const { name, description } = req.body;
 
     const updatedRole = await Role.findByIdAndUpdate(
-      req.params.id,
+      roleId,
       { name, description },
       { new: true, runValidators: true }
     );
