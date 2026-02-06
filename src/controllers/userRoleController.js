@@ -38,12 +38,15 @@ const validateUserAndRole = async (userId, roleId) => {
  * @param {Object} assignment - The role assignment object
  * @returns {Object} Formatted assignment data
  */
-const formatRoleAssignment = (assignment) => ({
-  roleId: assignment.roleId._id,
-  name: assignment.roleId.name,
-  description: assignment.roleId.description,
-  isActive: assignment.isActive
-});
+const formatRoleAssignment = (assignment) => {
+  const { roleId, isActive } = assignment;
+  return {
+    roleId: roleId._id,
+    name: roleId.name,
+    description: roleId.description,
+    isActive
+  };
+};
 
 exports.assignRoleToUser = async (req, res) => {
   try {
