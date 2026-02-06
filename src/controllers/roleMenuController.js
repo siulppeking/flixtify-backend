@@ -101,7 +101,7 @@ exports.getMenusByRole = async (req, res) => {
     const assignments = await RoleMenu.find({ roleId }).populate('menuId');
 
     // 2. Mapear para devolver solo los detalles del menú
-    const menus = assignments.map(a => a.menuId).filter(menu => menu !== null);
+    const menus = assignments.map(a => a.menuId).filter(Boolean);
 
     res.json(menus);
   } catch (error) {
