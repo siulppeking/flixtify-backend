@@ -79,8 +79,8 @@ exports.getUserById = async (req, res) => {
 // PUT /admin/users/:id
 exports.updateUser = async (req, res) => {
   try {
-    const adminId = req.user.id; // El ID del administrador logueado
-    const targetUserId = req.params.id; // El ID del usuario a modificar
+    const { id: adminId } = req.user; // El ID del administrador logueado
+    const { id: targetUserId } = req.params; // El ID del usuario a modificar
     const updates = req.body;
 
     // PRECAUCIÓN: No permitir que un administrador cambie su propia cuenta por esta ruta.
