@@ -86,15 +86,15 @@ Este proyecto incluye documentación interactiva de la API usando Swagger UI.
 2. Abre tu navegador en `http://localhost:3000/api-docs`.
 3. Explora todos los endpoints disponibles y pruébalos interactivamente.
 
-## Variables de entorno
+## Variables de Entorno Disponibles
 
-Las siguientes variables están disponibles (ver `.env.example`):
+Las siguientes variables están disponibles y deben configurarse en `.env` (consulta `.env.example`):
 
-- `URL_MONGODB`: cadena de conexión a MongoDB.
-- `PORT`: puerto de la aplicación.
-- `JWT_SECRET`: clave para firmar JWT.
-- `JWT_REFRESH_SECRET`: clave para refrescar JWT.
-- `NODE_ENV`: entorno (`development`, `production`).
+- `URL_MONGODB`: Cadena de conexión a MongoDB (Atlas o local).
+- `PORT`: Puerto del servidor (por defecto 3000).
+- `JWT_SECRET`: Clave secreta para firmar JWT (acceso).
+- `JWT_REFRESH_SECRET`: Clave secreta para refrescar JWT.
+- `NODE_ENV`: Entorno (`development` o `production`).
 
 ## Seguridad
 
