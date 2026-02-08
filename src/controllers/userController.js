@@ -3,7 +3,7 @@ const TwoFAMethod = require('../models/TwoFAMethod');
 
 const USER_PROJECTION = '-password -twoFAVerifiedSession';
 
-const isUserOwner = (requestingUserId, targetUserId) => {
+const isSameUser = (requestingUserId, targetUserId) => {
   return requestingUserId.toString() === targetUserId.toString();
 };
 
@@ -63,7 +63,7 @@ exports.getUserById = async (req, res) => {
       return res.status(404).json({ message: 'User not found or deleted' });
     }
 
-    if (!isUserOwner(requestingUserId, userId)) {
+    if (!isSameUser(requestingUserId, userId)) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -80,7 +80,7 @@ exports.updateUser = async (req, res) => {
     const requestingUserId = req.user.id;
     const updates = req.body;
 
-    if (!isUserOwner(requestingUserId, userId)) {
+    if (!isSameUser(requestingUserId, userId)) {
       return res.status(403).json({ message: 'Access denied to update this profile' });
     }
 
