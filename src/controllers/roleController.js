@@ -1,9 +1,23 @@
-// Role Controller - Manages role creation, update, deletion, and role-based permissions
+/**
+ * Role Controller
+ *
+ * Manages role creation, update, deletion, and role-based permissions.
+ * Handles CRUD operations for application roles and role-menu associations.
+ * Maintains role RBAC system integrity with validation and error handling.
+ *
+ * @module controllers/roleController
+ * @requires ../models/Role
+ * @requires ../models/UserRole
+ * @requires ../models/RoleMenu
+ */
 const Role = require('../models/Role');
 const UserRole = require('../models/UserRole');
 const RoleMenu = require('../models/RoleMenu');
 
-// Constants for consistent messaging
+/**
+ * Error messages for role operations
+ * @type {Object.<string, string>}
+ */
 const ERROR_MESSAGES = {
   ROLE_NOT_FOUND: 'Role not found',
   ROLE_NOT_FOUND_UPDATE: 'Role not found for update',
