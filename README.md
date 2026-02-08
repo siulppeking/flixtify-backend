@@ -73,17 +73,18 @@ Inicia el servidor en modo producción optimizado.
 - [Nodemon](https://nodemon.io/) - Monitor automático de cambios para desarrollo
 - [dotenv](https://github.com/motdotla/dotenv) - Gestión de variables de entorno
 
-## API Docs (Swagger)
+## API Docs (Swagger/OpenAPI)
 
-Este proyecto incluye documentación de la API en Swagger.
+Este proyecto incluye documentación interactiva de la API usando Swagger UI.
 
-- Archivo: `swagger.yaml`
-- Visualización: Cuando el servidor está corriendo, la UI de Swagger está disponible en `/api-docs`.
+- Definición: `swagger.yaml` (formato OpenAPI 3.0.0)
+- URL de acceso: Cuando el servidor está corriendo, accede a `/api-docs`
 
-### Cómo acceder
+### Cómo acceder a la documentación
 
 1. Inicia el servidor (`npm run dev` o `npm start`).
 2. Abre tu navegador en `http://localhost:3000/api-docs`.
+3. Explora todos los endpoints disponibles y pruébalos interactivamente.
 
 ## Variables de entorno
 
