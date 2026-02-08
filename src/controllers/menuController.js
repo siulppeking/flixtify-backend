@@ -1,10 +1,27 @@
-// Menu Controller - Manages dynamic menu structure and role-based menu access
+/**
+ * Menu Controller
+ *
+ * Manages dynamic menu structure and role-based menu access.
+ * Handles CRUD operations for menu items and menu-role associations.
+ * Supports hierarchical menu structures for flexible navigation setup.
+ *
+ * @module controllers/menuController
+ * @requires ../models/Menu
+ * @requires ../models/RoleMenu
+ */
 const Menu = require('../models/Menu');
 const RoleMenu = require('../models/RoleMenu');
 
-// Constants
+/**
+ * Valid menu item types
+ * @type {string[]}
+ */
 const MENU_TYPES = ['menu', 'submenu', 'form'];
 
+/**
+ * Error messages for menu operations
+ * @type {Object.<string, string>}
+ */
 const ERROR_MESSAGES = {
   MENU_NOT_FOUND: 'Menu item not found',
   MENU_NOT_FOUND_UPDATE: 'Menu item not found for update',
