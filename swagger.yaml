@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Flixtify API (Gestión de Proyectos y Tareas)
-  version: 1.0.0
+  version: 1.1.0
   description: API RESTful para la gestión personal de proyectos y tareas, incluyendo un sistema robusto de autenticación, roles y 2FA (dos factores).
   contact:
     name: Development Team
