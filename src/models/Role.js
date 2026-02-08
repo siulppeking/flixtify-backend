@@ -1,14 +1,33 @@
-// Role Model - Represents role definitions for role-based access control (RBAC)
+/**
+ * Role Model
+ *
+ * Represents role definitions for role-based access control (RBAC).
+ * Roles define sets of permissions that can be assigned to users.
+ * Each role has a unique name and optional description.
+ *
+ * @module models/Role
+ * @requires mongoose
+ */
 const mongoose = require('mongoose');
 
-// Constants for Role model
+/**
+ * Field constants for Role schema
+ * @type {Object}
+ * @property {string} NAME - Role name field key
+ * @property {string} DESCRIPTION - Role description field key
+ */
 const ROLE_FIELDS = {
   NAME: 'name',
   DESCRIPTION: 'description'
 };
 
 /**
- * Role schema holds application roles
+ * Role schema holds application roles with metadata
+ * @typedef {Object} Role
+ * @property {string} name - Unique role name (2-50 chars)
+ * @property {string} [description] - Role description
+ * @property {Date} createdAt - Creation timestamp
+ * @property {Date} updatedAt - Last update timestamp
  */
 const RoleSchema = new mongoose.Schema(
   {
