@@ -26,8 +26,14 @@
 - Estilo de código: Prettier + ESLint (ver configuraciones).
 
 ## Estándares de Código
-- Usar ESLint para linting.
-- Mantener consistencia con el código existente.
+
+- **Linting**: Usa ESLint para validar el código (`npm run lint`).
+- **Formato**: Formatea con Prettier antes de hacer commit (`npm run format`).
+- **Consistencia**: Mantén consistencia con el código existente.
+- **Nombres**: USA camelCase para variables/funciones, PascalCase para clases.
+- **Documentación**: Documenta funciones públicas y cambios importantes.
+- **Pruebas**: Agrega tests cuando sea posible (actualmente en desarrollo).
+
 - Agregar pruebas para nuevas funcionalidades.
 - Documentar cambios en el README si es necesario.
 
