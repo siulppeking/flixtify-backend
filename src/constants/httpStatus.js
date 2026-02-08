@@ -1,11 +1,11 @@
 /**
  * HTTP Status Code Constants
- * Centralized definitions for all HTTP status codes used across the API
- * Standard codes: 2xx (success), 4xx (client error), 5xx (server error)
+ * Standard REST API status codes organized by category
+ * 2xx: Success | 4xx: Client Error | 5xx: Server Error
  */
 
 module.exports = {
-  // Success responses
+  // Success responses - 2xx
   OK: 200,
   CREATED: 201,
   ACCEPTED: 202,
