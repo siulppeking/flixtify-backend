@@ -38,7 +38,7 @@ exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find().select(USER_PROJECTION);
 
-    const usersWithRoles = await Promise.all(users.map(async (user) => {
+    const usersWithAssignedRoles = await Promise.all(users.map(async (user) => {
       const roles = await getAssignedRoles(user._id);
       return {
         ...user.toObject(),
@@ -46,7 +46,7 @@ exports.getAllUsers = async (req, res) => {
       };
     }));
 
-    res.json(usersWithRoles);
+    res.json(usersWithAssignedRoles);
   } catch (error) {
     console.error('Error fetching all users:', error);
     res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH });
