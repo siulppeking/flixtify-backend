@@ -1,7 +1,24 @@
-// Token Model - Stores JWT refresh tokens for user authentication sessions
+/**
+ * Token Model
+ *
+ * Stores JWT refresh tokens for user authentication sessions.
+ * Maintains token metadata including user agent and IP for security tracking.
+ * Enables token revocation and session management.
+ *
+ * @module models/Token
+ * @requires mongoose
+ */
 const mongoose = require('mongoose');
 
-// Constants for Token model
+/**
+ * Field constants for Token schema
+ * @type {Object}
+ * @property {string} USER_ID - User reference field key
+ * @property {string} REFRESH_TOKEN - Refresh token field key
+ * @property {string} USER_AGENT - Browser/client information field key
+ * @property {string} IP - Client IP address field key
+ * @property {string} EXPIRES_AT - Token expiration timestamp field key
+ */
 const TOKEN_FIELDS = {
   USER_ID: 'userId',
   REFRESH_TOKEN: 'refreshToken',
@@ -11,7 +28,15 @@ const TOKEN_FIELDS = {
 };
 
 /**
- * Token schema stores refresh tokens tied to users
+ * Token schema stores refresh tokens tied to users with session metadata
+ * @typedef {Object} Token
+ * @property {ObjectId} userId - Reference to user who owns token
+ * @property {string} refreshToken - Encrypted JWT refresh token
+ * @property {string} userAgent - Browser/client user agent string
+ * @property {string} ip - Client IP address at token creation
+ * @property {Date} expiresAt - Token expiration timestamp
+ * @property {Date} createdAt - Creation timestamp
+ * @property {Date} updatedAt - Last update timestamp
  */
 const TokenSchema = new mongoose.Schema(
   {
