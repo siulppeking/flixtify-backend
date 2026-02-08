@@ -5,18 +5,18 @@
  */
 
 module.exports = {
-  // Server configuration
+  // Server configuration - Express server and environment settings
   SERVER: {
     PORT: process.env.PORT || 3000,
     NODE_ENV: process.env.NODE_ENV || 'development',
     HOST: process.env.HOST || 'localhost'
   },
 
-  // Database configuration
+  // Database configuration - MongoDB connection and timeouts
   DATABASE: {
     URL: process.env.URL_MONGODB || 'mongodb://localhost:27017/flixtify',
-    CONNECTION_TIMEOUT: 30000,
-    MAX_RETRIES: 3
+    CONNECTION_TIMEOUT: 30000, // 30 seconds
+    MAX_RETRIES: 3 // Connection retry attempts
   },
 
   // JWT configuration
