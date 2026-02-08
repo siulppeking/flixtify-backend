@@ -109,7 +109,8 @@ exports.getAllTasks = async (req, res) => {
 exports.getTaskById = async (req, res) => {
   try {
     const ownerId = req.user.id;
-    const task = await validateTaskOwnership(req.params.id, ownerId);
+    const { id: taskId } = req.params;
+    const task = await validateTaskOwnership(taskId, ownerId);
 
     if (!task) {
       return res.status(404).json({ message: ERROR_MESSAGES.TASK_NOT_FOUND });
