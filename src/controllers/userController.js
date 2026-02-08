@@ -118,7 +118,7 @@ exports.updateUser = async (req, res) => {
 // DELETE /api/users/:id (Soft Delete - Admin Only)
 exports.deleteUser = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const { id: userId } = req.params;
 
     // 1. Marcar el usuario como eliminado y deshabilitado
     const deletedUser = await User.findOneAndUpdate(
