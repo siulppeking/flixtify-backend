@@ -106,7 +106,7 @@ exports.getProjectById = async (req, res) => {
 exports.updateProject = async (req, res) => {
   try {
     const ownerId = req.user.id;
-    const projectId = req.params.id;
+    const { id: projectId } = req.params;
     const updates = req.body;
 
     const updatedProject = await Project.findOneAndUpdate(
