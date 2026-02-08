@@ -55,7 +55,7 @@ exports.getAllUsers = async (req, res) => {
 
 exports.getUserById = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const { id: userId } = req.params;
 
     const user = await User.findById(userId).select(USER_PROJECTION);
     if (!user) {
