@@ -96,7 +96,11 @@ Las siguientes variables están disponibles y deben configurarse en `.env` (cons
 - `JWT_REFRESH_SECRET`: Clave secreta para refrescar JWT.
 - `NODE_ENV`: Entorno (`development` o `production`).
 
-## Seguridad
+## Seguridad y Mejores Prácticas
 
-- No compartas el archivo `.env`.
-- Asegúrate de que `.env` esté ignorado por Git (ver `.gitignore`).
+- **No compartas el archivo `.env`** - Contiene credenciales y secretos sensibles.
+- **Asegúrate de que `.env` esté ignorado por Git** - Verificar en `.gitignore`.
+- **Usa secretos JWT fuertes** - Mínimo 32 caracteres, aleatorios.
+- **Rotación de secretos** - Cambiar JWT_SECRET periódicamente en producción.
+- **HTTPS en producción** - Usar certificados SSL/TLS.
+- **Reporta vulnerabilidades privadamente** - Ver `SECURITY.md`.
