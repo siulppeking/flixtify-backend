@@ -47,8 +47,22 @@ Usar formato Conventional Commits:
 - `test:` pruebas
 
 ## Pull Requests
-- Describe claramente los cambios y enlaza issues relacionados.
-- Mantén los cambios enfocados y mínimos.
+
+### Antes de enviar un PR
+1. Asegúrate de que tu código pasa `npm run lint` y `npm run format`.
+2. Prueba los cambios localmente.
+3. Actualiza documentación si es necesario.
+
+### Descripción del PR
+- **Título**: Breve y descriptivo (idealmente comienza con tipo: `feat:`, `fix:`, etc).
+- **Descripción**: Explica **por qué** se hace el cambio, no solo **qué**.
+- **Enlaces**: Vincula issues relacionados con `Closes #123` o `Related to #456`.
+- **Cambios**: Lista los cambios principales o afecciones.
+
+### Revisión
+- Responde a comentarios de revisores.
+- Sé abierto al feedback y mejoras sugeridas.
+- Requerimos __al menos 1 aprobación__ antes de mergear.
 
 ## Seguridad
 - No comprometas secretos. `.env` está ignorado.
