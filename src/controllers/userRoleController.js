@@ -70,8 +70,8 @@ exports.assignRoleToUser = async (req, res) => {
       return res.status(400).json({ message: ERROR_MESSAGES.REQUIRED_FIELDS });
     }
 
-    const existingAssignment = await UserRole.findOne({ userId, roleId });
-    if (existingAssignment) {
+    const existingLink = await UserRole.findOne({ userId, roleId });
+    if (existingLink) {
       return res.status(400).json({ message: ERROR_MESSAGES.ROLE_ALREADY_ASSIGNED });
     }
 
