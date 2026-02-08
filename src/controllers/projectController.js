@@ -83,7 +83,7 @@ exports.getAllProjects = async (req, res) => {
 exports.getProjectById = async (req, res) => {
   try {
     const ownerId = req.user.id;
-    const projectId = req.params.id;
+    const { id: projectId } = req.params;
 
     const project = await validateProjectOwnership(projectId, ownerId);
 
