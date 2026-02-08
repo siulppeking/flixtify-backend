@@ -5,7 +5,7 @@
  */
 
 module.exports = {
-  // Authentication errors
+  // Authentication errors - Token and credential validation
   MISSING_AUTHORIZATION_HEADER: 'Authorization header missing',
   MISSING_TOKEN: 'Token missing',
   INVALID_TOKEN: 'Invalid token',
@@ -13,7 +13,7 @@ module.exports = {
   USER_DISABLED: 'User disabled',
   INVALID_CREDENTIALS: 'Invalid email or password',
   
-  // Authorization errors
+  // Authorization errors - Permission and access control checks
   NO_ACTIVE_ROLE: 'Access denied: No active role found',
   ROLE_NOT_RECOGNIZED: 'Access denied: Role not recognized',
   REQUIRES_ADMIN: 'Access denied: Requires ADMIN privileges',
