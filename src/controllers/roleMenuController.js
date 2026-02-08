@@ -55,8 +55,8 @@ exports.assignMenuToRole = async (req, res) => {
       return res.status(400).json({ message: ERROR_MESSAGES.REQUIRED_FIELDS });
     }
 
-    const existingAssignment = await RoleMenu.findOne({ roleId, menuId });
-    if (existingAssignment) {
+    const existingLink = await RoleMenu.findOne({ roleId, menuId });
+    if (existingLink) {
       return res.status(400).json({ message: ERROR_MESSAGES.MENU_ALREADY_ASSIGNED });
     }
 
