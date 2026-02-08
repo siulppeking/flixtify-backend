@@ -96,6 +96,17 @@ Las siguientes variables están disponibles y deben configurarse en `.env` (cons
 - `JWT_REFRESH_SECRET`: Clave secreta para refrescar JWT.
 - `NODE_ENV`: Entorno (`development` o `production`).
 
+## Despliegue e Infraestructura
+
+### Requisitos de Producción
+- Node.js v20.x
+- MongoDB 6.0+ (recomendado Atlas o instancia dedicada)
+- HTTPS/SSL certificados
+- Variables de entorno configuradas en el servidor
+
+### Próximo: Docker Support
+Se planea agregar soporte para Docker (Dockerfile y docker-compose.yml).
+
 ## Seguridad y Mejores Prácticas
 
 - **No compartas el archivo `.env`** - Contiene credenciales y secretos sensibles.
