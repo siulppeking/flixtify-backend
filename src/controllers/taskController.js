@@ -135,7 +135,7 @@ exports.getTaskById = async (req, res) => {
 exports.updateTask = async (req, res) => {
   try {
     const ownerId = req.user.id;
-    const taskId = req.params.id;
+    const { id: taskId } = req.params;
     const updates = req.body;
 
     // 1. Verificar propiedad antes de actualizar
