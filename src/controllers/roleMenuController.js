@@ -1,9 +1,23 @@
-// Role Menu Controller - Manages mapping of menus to roles for access control
+/**
+ * Role Menu Controller
+ *
+ * Manages mapping of menus to roles for access control.
+ * Handles assignment and revocation of menu items to/from roles.
+ * Implements menu visibility rules based on user role assignments.
+ *
+ * @module controllers/roleMenuController
+ * @requires ../models/Menu
+ * @requires ../models/Role
+ * @requires ../models/RoleMenu
+ */
 const Menu = require('../models/Menu');
 const Role = require('../models/Role');
 const RoleMenu = require('../models/RoleMenu');
 
-// Constants
+/**
+ * Error messages for role-menu assignment operations
+ * @type {Object.<string, string>}
+ */
 const ERROR_MESSAGES = {
   REQUIRED_FIELDS: 'roleId and menuId are required',
   REQUIRED_PARAMS: 'roleId and menuId must be provided in the URL',
