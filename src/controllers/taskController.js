@@ -163,7 +163,7 @@ exports.updateTask = async (req, res) => {
 exports.deleteTask = async (req, res) => {
   try {
     const ownerId = req.user.id;
-    const taskId = req.params.id;
+    const { id: taskId } = req.params;
 
     // 1. Verificar propiedad antes de eliminar
     const task = await validateTaskOwnership(taskId, ownerId);
