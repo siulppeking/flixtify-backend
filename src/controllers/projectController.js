@@ -137,7 +137,7 @@ exports.updateProject = async (req, res) => {
 exports.deleteProject = async (req, res) => {
   try {
     const ownerId = req.user.id;
-    const projectId = req.params.id;
+    const { id: projectId } = req.params;
 
     // 1. Intentar eliminar el proyecto (filtando por dueño)
     const projectResult = await Project.deleteOne({ _id: projectId, ownerId });
