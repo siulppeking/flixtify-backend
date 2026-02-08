@@ -53,7 +53,7 @@ exports.getAllUsers = async (req, res) => {
 
 exports.getUserById = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const { id: userId } = req.params;
     const requestingUserId = req.user.id;
 
     const user = await User.findOne({ _id: userId, deleted: false })
