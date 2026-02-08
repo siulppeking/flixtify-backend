@@ -1,9 +1,23 @@
-// User Role Controller - Manages user-role assignments and relationships
+/**
+ * User Role Controller
+ *
+ * Manages user-role assignments and relationships.
+ * Handles assignment and revocation of roles to/from users.
+ * Maintains the core RBAC system by managing user-role bindings.
+ *
+ * @module controllers/userRoleController
+ * @requires ../models/Role
+ * @requires ../models/User
+ * @requires ../models/UserRole
+ */
 const Role = require('../models/Role');
 const User = require('../models/User');
 const UserRole = require('../models/UserRole');
 
-// Constants
+/**
+ * Error messages for user-role assignment operations
+ * @type {Object.<string, string>}
+ */
 const ERROR_MESSAGES = {
   REQUIRED_FIELDS: 'userId and roleId are required',
   ROLE_ALREADY_ASSIGNED: 'This role is already assigned to this user',
