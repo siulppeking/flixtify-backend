@@ -19,7 +19,7 @@ const ADMIN_VERIFICATION_CONFIG = {
  */
 const checkAdmin = async (req, res, next) => {
   try {
-    const activeRoleId = req.user.activeRoleId;
+    const { activeRoleId } = req.user;
 
     if (!activeRoleId) {
       return res.status(httpStatus.FORBIDDEN).json({ message: errorMessages.NO_ACTIVE_ROLE });
