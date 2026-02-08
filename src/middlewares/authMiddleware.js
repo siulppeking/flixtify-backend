@@ -6,7 +6,6 @@ const errorMessages = require('../constants/errorMessages');
 
 // Constants for token validation
 const TOKEN_PREFIX = 'Bearer';
-const BEARER_SPLIT_INDEX = 1;
 
 /**
  * Extract bearer token from authorization header
@@ -15,9 +14,9 @@ const BEARER_SPLIT_INDEX = 1;
  */
 const extractTokenFromHeader = (authHeader) => {
   if (!authHeader) return null;
-  const parts = authHeader.split(' ');
-  if (parts[0] !== TOKEN_PREFIX || parts.length !== 2) return null;
-  return parts[BEARER_SPLIT_INDEX];
+  const [scheme, token] = authHeader.split(' ');
+  if (scheme !== TOKEN_PREFIX || !token) return null;
+  return token;
 };
 
 /**
