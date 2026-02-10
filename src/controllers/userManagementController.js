@@ -27,11 +27,14 @@ const SUCCESS_MESSAGES = {
  */
 const getAssignedRoles = async (userId) => {
   const userAssignments = await UserRole.find({ userId }).populate('roleId', 'name');
-  return userAssignments.map(assignment => ({
-    id: assignment.roleId._id,
-    name: assignment.roleId.name,
-    isActive: assignment.isActive
-  }));
+  return userAssignments.map((assignment) => {
+    const { roleId, isActive } = assignment;
+    return {
+      id: roleId._id,
+      name: roleId.name,
+      isActive
+    };
+  });
 };
 
 exports.getAllUsers = async (req, res) => {
