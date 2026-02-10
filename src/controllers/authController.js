@@ -193,7 +193,7 @@ exports.refreshToken = async (req, res) => {
 // Switch Active Role: Desactiva el rol actual y activa el nuevo.
 exports.switchActiveRole = async (req, res) => {
     try {
-        const userId = req.user.id; // Obtenido del JWT (ver middleware de autenticación)
+        const { id: userId } = req.user; // Obtenido del JWT (ver middleware de autenticación)
         const { newRoleId } = req.body;
 
         // 1. Verificar si el usuario tiene el nuevo rol
