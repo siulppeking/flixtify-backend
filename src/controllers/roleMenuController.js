@@ -112,10 +112,10 @@ exports.getMenusByRole = async (req, res) => {
     const { roleId } = req.params;
 
     // 1. Encontrar todos los enlaces para ese Role
-    const assignments = await RoleMenu.find({ roleId }).populate('menuId');
+    const roleMenuAssignments = await RoleMenu.find({ roleId }).populate('menuId');
 
     // 2. Mapear para devolver solo los detalles del menú
-    const menus = assignments.map(a => a.menuId).filter(Boolean);
+    const menus = roleMenuAssignments.map(a => a.menuId).filter(Boolean);
 
     res.json(menus);
   } catch (error) {
