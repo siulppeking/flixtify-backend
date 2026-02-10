@@ -275,7 +275,7 @@ exports.delete2FAMethod = async (req, res) => {
     try {
         // 1. Soft Delete del método (lo marca como eliminado y deshabilitado)
         const deletedMethod = await TwoFAMethod.findOneAndUpdate(
-            { _id: methodId, userId: userId, deleted: false },
+          { _id: methodId, userId, deleted: false },
             { deleted: true, isEnabled: false },
             { new: true }
         );
@@ -286,7 +286,7 @@ exports.delete2FAMethod = async (req, res) => {
 
         // 2. Verificar si quedan métodos activos (no eliminados y habilitados)
         const remainingActiveMethods = await TwoFAMethod.countDocuments({
-            userId: userId,
+          userId,
             deleted: false,
             isEnabled: true
         });
