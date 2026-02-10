@@ -234,7 +234,7 @@ exports.switchActiveRole = async (req, res) => {
 exports.getMyMenus = async (req, res) => {
     try {
         // Obtenemos el activeRoleId directamente del JWT (asumiendo que el middleware lo ha decodificado)
-        const activeRoleId = req.user.activeRoleId;
+        const { activeRoleId } = req.user;
 
         if (!activeRoleId) {
             return res.status(403).json({ message: "No active role ID found in token." });
@@ -245,15 +245,16 @@ exports.getMyMenus = async (req, res) => {
 
         // 2. Mapear y filtrar los datos de los menús para el frontend
         const menus = roleMenus
-            .filter(rm => rm.menuId) // Asegurarse de que el menú existe
-            .map(rm => ({
-                id: rm.menuId._id,
-                name: rm.menuId.name,
-                path: rm.menuId.path,
-                icon: rm.menuId.icon,
-                type: rm.menuId.type, // (menu, submenu, form)
-                parent: rm.menuId.parent
-            }));
+          .filter(rm => rm.menuId) // Asegurarse de que el menú existe
+          .map(rm => ({
+            id: rm.menuId._id,
+            name: rm.menuId.name,
+            path: rm.menuId.path,
+            icon: rm.menuId.icon,
+            type: rm.menuId.type, // (menu, submenu, form)
+            parent: rm.menuId.parent
+          }))
+          .filter(Boolean);
 
         res.json(menus);
     } catch (error) {
