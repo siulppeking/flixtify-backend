@@ -269,8 +269,8 @@ exports.setActive2FAMethod = async (req, res) => {
 
 // DELETE /api/users/2fa/methods/:methodId (Soft Delete)
 exports.delete2FAMethod = async (req, res) => {
-    const { methodId } = req.params;
-    const userId = req.user.id;
+  const { methodId } = req.params;
+  const { id: userId } = req.user;
 
     try {
         // 1. Soft Delete del método (lo marca como eliminado y deshabilitado)
