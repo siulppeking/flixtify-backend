@@ -237,18 +237,18 @@ exports.list2FAMethods = async (req, res) => {
 
 // PUT /api/users/2fa/methods/:methodId/set-active
 exports.setActive2FAMethod = async (req, res) => {
-    const { methodId } = req.params;
-    const userId = req.user.id;
+  const { methodId } = req.params;
+  const { id: userId } = req.user;
 
     try {
-        const method = await TwoFAMethod.findOne({ _id: methodId, userId: userId, deleted: false, isVerified: true });
+        const method = await TwoFAMethod.findOne({ _id: methodId, userId, deleted: false, isVerified: true });
 
         if (!method) {
             return res.status(404).json({ message: 'Método no encontrado, eliminado o no verificado.' });
         }
 
         // 1. Deshabilitar todos los métodos del usuario
-        await TwoFAMethod.updateMany({ userId: userId }, { isEnabled: false });
+        await TwoFAMethod.updateMany({ userId }, { isEnabled: false });
 
         // 2. Habilitar el método seleccionado
         const updatedMethod = await TwoFAMethod.findByIdAndUpdate(
