@@ -12,22 +12,24 @@ const USER_ROLE_ROUTES = {
   BY_USER_AND_ROLE: '/:userId/:roleId'
 };
 
+const { ROOT, BY_USER, BY_USER_AND_ROLE } = USER_ROLE_ROUTES;
+
 /**
  * POST /api/user-roles - Assign role to user
  * @description Assign a role to a user (requires authentication and admin privilege)
  */
-router.post(USER_ROLE_ROUTES.ROOT, auth, checkAdmin, userRoleController.assignRoleToUser);
+router.post(ROOT, auth, checkAdmin, userRoleController.assignRoleToUser);
 
 /**
  * GET /api/user-roles/:userId - Get roles by user
  * @description Retrieve all roles assigned to a user (requires authentication)
  */
-router.get(USER_ROLE_ROUTES.BY_USER, auth, userRoleController.getRolesByUser);
+router.get(BY_USER, auth, userRoleController.getRolesByUser);
 
 /**
  * DELETE /api/user-roles/:userId/:roleId - Revoke role from user
  * @description Remove a role from a user (requires authentication and admin privilege)
  */
-router.delete(USER_ROLE_ROUTES.BY_USER_AND_ROLE, auth, checkAdmin, userRoleController.revokeRoleFromUser);
+router.delete(BY_USER_AND_ROLE, auth, checkAdmin, userRoleController.revokeRoleFromUser);
 
 module.exports = router;
