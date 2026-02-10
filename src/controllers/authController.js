@@ -269,7 +269,8 @@ exports.getMyMenus = async (req, res) => {
 exports.enable2FA = async (req, res) => {
     try {
         // Asumiendo que req.user.id es el ID del usuario autenticado
-        const user = await User.findById(req.user.id);
+        const { id: userId } = req.user;
+        const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: "User not found" });
 
         const secret = speakeasy.generateSecret({ name: "Flixtify" });
@@ -289,7 +290,8 @@ exports.verify2FA = async (req, res) => {
     try {
         const { token } = req.body;
         // Asumiendo que req.user.id es el ID del usuario autenticado
-        const user = await User.findById(req.user.id);
+        const { id: userId } = req.user;
+        const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: "User not found" });
 
         const verified = speakeasy.totp.verify({
