@@ -241,10 +241,10 @@ exports.getMyMenus = async (req, res) => {
         }
 
         // 1. Obtener los enlaces RoleMenu para ese Rol Activo
-        const roleMenus = await RoleMenu.find({ roleId: activeRoleId }).populate("menuId");
+        const roleMenuLinks = await RoleMenu.find({ roleId: activeRoleId }).populate("menuId");
 
         // 2. Mapear y filtrar los datos de los menús para el frontend
-        const menus = roleMenus
+        const menus = roleMenuLinks
           .filter(rm => rm.menuId) // Asegurarse de que el menú existe
           .map(rm => ({
             id: rm.menuId._id,
