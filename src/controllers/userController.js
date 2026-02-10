@@ -223,10 +223,10 @@ exports.verifyTOTP = async (req, res) => {
 // GET /api/users/2fa/methods
 exports.list2FAMethods = async (req, res) => {
     try {
-        const userId = req.user.id;
+    const { id: userId } = req.user;
 
         // Buscar todos los métodos no eliminados para el usuario actual, excluyendo el secreto
-        const methods = await TwoFAMethod.find({ userId: userId, deleted: false }).select('-secret');
+        const methods = await TwoFAMethod.find({ userId, deleted: false }).select('-secret');
 
         res.json(methods);
     } catch (error) {
