@@ -82,27 +82,40 @@ exports.getRoleById = async (req, res) => {
 
 exports.createRole = async (req, res) => {
   try {
-    const { name, description } = req.body;
+    let { name, description } = req.body;
 
-    if (!name) {
-      return res.status(400).json({ message: ERROR_MESSAGES.ROLE_NAME_REQUIRED });
+    if (!name || !name.trim()) {
+      return res.status(400).json({
+        message: ERROR_MESSAGES.ROLE_NAME_REQUIRED
+      });
     }
 
-    const existingRole = await Role.findOne({ name });
+    name = name.trim();
+
+    const existingRole = await Role.findOne({ name }).lean();
     if (existingRole) {
-      return res.status(400).json({ message: ERROR_MESSAGES.ROLE_EXISTS });
+      return res.status(400).json({
+        message: ERROR_MESSAGES.ROLE_EXISTS
+      });
     }
 
-    const newRole = await Role.create({ name, description });
-    res.status(201).json({
+    const newRole = await Role.create({
+      name,
+      description
+    });
+
+    return res.status(201).json({
       message: SUCCESS_MESSAGES.ROLE_CREATED,
       role: newRole
     });
   } catch (error) {
     console.error('Error creating role:', error);
-    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_CREATE });
+    return res.status(500).json({
+      message: ERROR_MESSAGES.SERVER_ERROR_CREATE
+    });
   }
 };
+
 
 exports.updateRole = async (req, res) => {
   try {
