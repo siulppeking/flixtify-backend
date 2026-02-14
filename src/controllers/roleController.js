@@ -52,17 +52,31 @@ exports.getAllRoles = async (req, res) => {
 };
 
 
+
 exports.getRoleById = async (req, res) => {
   try {
     const { id: roleId } = req.params;
-    const role = await Role.findById(roleId);
-    if (!role) {
-      return res.status(404).json({ message: ERROR_MESSAGES.ROLE_NOT_FOUND });
+
+    if (!mongoose.Types.ObjectId.isValid(roleId)) {
+      return res.status(400).json({
+        message: ERROR_MESSAGES.ROLE_NOT_FOUND
+      });
     }
-    res.json(role);
+
+    const role = await Role.findById(roleId).lean();
+
+    if (!role) {
+      return res.status(404).json({
+        message: ERROR_MESSAGES.ROLE_NOT_FOUND
+      });
+    }
+
+    return res.status(200).json(role);
   } catch (error) {
     console.error('Error fetching role:', error);
-    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH_SINGLE });
+    return res.status(500).json({
+      message: ERROR_MESSAGES.SERVER_ERROR_FETCH_SINGLE
+    });
   }
 };
 
