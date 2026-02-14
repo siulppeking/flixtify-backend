@@ -40,13 +40,17 @@ const SUCCESS_MESSAGES = {
 
 exports.getAllRoles = async (req, res) => {
   try {
-    const roles = await Role.find({});
-    res.json(roles);
+    const roles = await Role.find({}).lean();
+
+    return res.status(200).json(roles);
   } catch (error) {
     console.error('Error fetching roles:', error);
-    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH });
+    return res
+      .status(500)
+      .json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH });
   }
 };
+
 
 exports.getRoleById = async (req, res) => {
   try {
