@@ -26,16 +26,28 @@ const SUCCESS_MESSAGES = {
  */
 const validateTaskOwnership = async (taskId, ownerId) => {
   try {
-    const task = await Task.findById(taskId).populate({
-      path: 'projectId',
-      select: 'ownerId'
-    });
+    if (
+      !mongoose.Types.ObjectId.isValid(taskId) ||
+      !mongoose.Types.ObjectId.isValid(ownerId)
+    ) {
+      return null;
+    }
+
+    const task = await Task.findById(taskId)
+      .select('projectId')
+      .populate({
+        path: 'projectId',
+        select: 'ownerId',
+        options: { lean: true }
+      })
+      .lean();
 
     if (!task || !task.projectId) return null;
 
     if (task.projectId.ownerId.toString() !== ownerId.toString()) {
       return null;
     }
+
     return task;
   } catch (error) {
     return null;
