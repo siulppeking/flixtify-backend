@@ -65,9 +65,21 @@ exports.createTask = async (req, res) => {
     const ownerId = req.user.id;
     const { projectId, title, description, priority, status, dueDate } = req.body;
 
-    const project = await Project.findOne({ _id: projectId, ownerId });
+    if (!mongoose.Types.ObjectId.isValid(projectId)) {
+      return res.status(403).json({
+        message: ERROR_MESSAGES.PROJECT_NOT_FOUND
+      });
+    }
+
+    const project = await Project.findOne({
+      _id: projectId,
+      ownerId
+    }).lean();
+
     if (!project) {
-      return res.status(403).json({ message: ERROR_MESSAGES.PROJECT_NOT_FOUND });
+      return res.status(403).json({
+        message: ERROR_MESSAGES.PROJECT_NOT_FOUND
+      });
     }
 
     const newTask = await Task.create({
@@ -78,13 +90,16 @@ exports.createTask = async (req, res) => {
       status,
       dueDate
     });
-    res.status(201).json({
+
+    return res.status(201).json({
       message: SUCCESS_MESSAGES.TASK_CREATED,
       task: newTask
     });
   } catch (error) {
     console.error('Error creating task:', error);
-    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_CREATE });
+    return res.status(500).json({
+      message: ERROR_MESSAGES.SERVER_ERROR_CREATE
+    });
   }
 };
 
