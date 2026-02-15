@@ -113,19 +113,32 @@ exports.getAllTasks = async (req, res) => {
   try {
     const ownerId = req.user.id;
 
-    const userProjects = await Project.find({ ownerId }).select('_id');
+    const userProjects = await Project.find({ ownerId })
+      .select('_id')
+      .lean();
+
+    if (!userProjects.length) {
+      return res.status(200).json([]);
+    }
+
     const projectIds = userProjects.map(p => p._id);
 
-    const tasks = await Task.find({ projectId: { $in: projectIds } })
+    const tasks = await Task.find({
+      projectId: { $in: projectIds }
+    })
       .populate('projectId', 'name')
-      .sort({ dueDate: 1 });
+      .sort({ dueDate: 1 })
+      .lean();
 
-    res.json(tasks);
+    return res.status(200).json(tasks);
   } catch (error) {
     console.error('Error fetching tasks:', error);
-    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH });
+    return res.status(500).json({
+      message: ERROR_MESSAGES.SERVER_ERROR_FETCH
+    });
   }
 };
+
 
 /**
  * Get a specific task by ID if user owns the project
