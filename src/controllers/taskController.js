@@ -150,21 +150,34 @@ exports.getTaskById = async (req, res) => {
   try {
     const ownerId = req.user.id;
     const { id: taskId } = req.params;
-    const task = await validateTaskOwnership(taskId, ownerId);
 
-    if (!task) {
-      return res.status(404).json({ message: ERROR_MESSAGES.TASK_NOT_FOUND });
+    const isOwner = await validateTaskOwnership(taskId, ownerId);
+
+    if (!isOwner) {
+      return res.status(404).json({
+        message: ERROR_MESSAGES.TASK_NOT_FOUND
+      });
     }
 
-    // Poblar si es necesario, excluyendo el ownerId del proyecto para el cliente
-    await task.populate('projectId', 'name dueDate');
+    const task = await Task.findById(taskId)
+      .populate('projectId', 'name dueDate')
+      .lean();
 
-    res.json(task);
+    if (!task) {
+      return res.status(404).json({
+        message: ERROR_MESSAGES.TASK_NOT_FOUND
+      });
+    }
+
+    return res.status(200).json(task);
   } catch (error) {
     console.error('Error fetching task:', error);
-    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH });
+    return res.status(500).json({
+      message: ERROR_MESSAGES.SERVER_ERROR_FETCH
+    });
   }
 };
+
 
 /**
  * Update a task if user owns the project
