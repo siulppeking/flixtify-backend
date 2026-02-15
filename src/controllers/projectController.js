@@ -66,11 +66,17 @@ exports.createProject = async (req, res) => {
 exports.getAllProjects = async (req, res) => {
   try {
     const ownerId = req.user.id;
-    const projects = await Project.find({ ownerId }).sort({ createdAt: -1 });
-    res.json(projects);
+
+    const projects = await Project.find({ ownerId })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return res.status(200).json(projects);
   } catch (error) {
     console.error('Error fetching projects:', error);
-    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_FETCH });
+    return res.status(500).json({
+      message: ERROR_MESSAGES.SERVER_ERROR_FETCH
+    });
   }
 };
 
