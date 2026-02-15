@@ -219,17 +219,23 @@ exports.deleteTask = async (req, res) => {
     const { id: taskId } = req.params;
 
     // 1. Verificar propiedad antes de eliminar
-    const task = await validateTaskOwnership(taskId, ownerId);
-    if (!task) {
-      return res.status(404).json({ message: ERROR_MESSAGES.TASK_NOT_FOUND });
+    const isOwner = await validateTaskOwnership(taskId, ownerId);
+    if (!isOwner) {
+      return res.status(404).json({
+        message: ERROR_MESSAGES.TASK_NOT_FOUND
+      });
     }
 
     // 2. Si es dueño, elimina
-    await Task.deleteOne({ _id: taskId });
+    await Task.findByIdAndDelete(taskId);
 
-    res.json({ message: SUCCESS_MESSAGES.TASK_DELETED });
+    return res.status(200).json({
+      message: SUCCESS_MESSAGES.TASK_DELETED
+    });
   } catch (error) {
     console.error('Error deleting task:', error);
-    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_DELETE });
+    return res.status(500).json({
+      message: ERROR_MESSAGES.SERVER_ERROR_DELETE
+    });
   }
 };
