@@ -1,22 +1,14 @@
 // Task Controller - Manages task creation, updates, completion, and status tracking
 const Task = require('../models/Task');
 const Project = require('../models/Project');
+const httpStatus = require('../constants/httpStatus');
+const errorMessages = require('../constants/errorMessages');
+const apiMessages = require('../constants/apiMessages');
+const dbFields = require('../constants/dbFields');
+const errorHandler = require('../utils/errorHandler');
 
-// Constants
-const ERROR_MESSAGES = {
-  TASK_NOT_FOUND: 'Task not found or access denied.',
-  PROJECT_NOT_FOUND: 'Project not found or access denied',
-  SERVER_ERROR_CREATE: 'Server error creating task',
-  SERVER_ERROR_FETCH: 'Server error fetching tasks',
-  SERVER_ERROR_UPDATE: 'Server error updating task.',
-  SERVER_ERROR_DELETE: 'Server error deleting task.'
-};
-
-const SUCCESS_MESSAGES = {
-  TASK_CREATED: 'Task created successfully',
-  TASK_UPDATED: 'Task updated successfully.',
-  TASK_DELETED: 'Task deleted successfully.'
-};
+const TASK_PROJECTION = '-__v';
+const PROJECT_PROJECTION = '-__v';
 
 /**
  * Validates task ownership through project ownership
