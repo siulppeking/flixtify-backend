@@ -7,6 +7,8 @@ const morgan = require('morgan');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
+const config = require('./src/config/environment');
+const apiMessages = require('./src/constants/apiMessages');
 
 // Database
 const connectDB = require('./src/databases/connection');
@@ -24,10 +26,10 @@ const userRoutes = require('./src/routes/userRoutes');
 
 const swaggerDocument = YAML.load('./swagger.yaml');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = config.SERVER.PORT;
 
 // Middleware setup
-app.use(morgan('dev'));
+app.use(morgan(config.LOGGING.FORMAT));
 app.use(express.json());
 app.use(cors());
 
@@ -39,8 +41,8 @@ connectDB();
 // Root endpoint
 app.get('/', (req, res) => {
   res.status(200).json({
-    message: 'Bienvenido a Flixtify Backend v1',
-    status: 'ok'
+    message: apiMessages.GENERAL_MESSAGES.WELCOME,
+    status: apiMessages.GENERAL_MESSAGES.OK
   });
 });
 
@@ -56,7 +58,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/tasks', taskRoutes);
 
 // Swagger documentation
-if (process.env.NODE_ENV === 'development') {
+if (config.SERVER.NODE_ENV === 'development') {
   console.log('📝 Swagger UI mounted at /api-docs (Development)');
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 } else {
