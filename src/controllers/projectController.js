@@ -1,22 +1,14 @@
 // Project Controller - Handles project and task management operations
 const Project = require('../models/Project');
 const Task = require('../models/Task');
+const httpStatus = require('../constants/httpStatus');
+const errorMessages = require('../constants/errorMessages');
+const apiMessages = require('../constants/apiMessages');
+const dbFields = require('../constants/dbFields');
+const errorHandler = require('../utils/errorHandler');
 
-// Constants
-const ERROR_MESSAGES = {
-  PROJECT_NOT_FOUND: 'Project not found or access denied',
-  SERVER_ERROR_CREATE: 'Server error creating project',
-  SERVER_ERROR_FETCH: 'Server error fetching projects',
-  SERVER_ERROR_FETCH_SINGLE: 'Server error fetching project',
-  SERVER_ERROR_UPDATE: 'Server error updating project',
-  SERVER_ERROR_DELETE: 'Server error deleting project'
-};
-
-const SUCCESS_MESSAGES = {
-  PROJECT_CREATED: 'Project created successfully',
-  PROJECT_UPDATED: 'Project updated successfully',
-  PROJECT_DELETED: 'Project and associated tasks deleted successfully'
-};
+const PROJECT_PROJECTION = '-__v';
+const TASK_PROJECTION = '-__v';
 
 /**
  * Validates if a project belongs to the specified owner
