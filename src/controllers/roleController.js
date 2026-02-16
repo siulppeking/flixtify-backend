@@ -13,30 +13,11 @@
 const Role = require('../models/Role');
 const UserRole = require('../models/UserRole');
 const RoleMenu = require('../models/RoleMenu');
-
-/**
- * Error messages for role operations
- * @type {Object.<string, string>}
- */
-const ERROR_MESSAGES = {
-  ROLE_NOT_FOUND: 'Role not found',
-  ROLE_NOT_FOUND_UPDATE: 'Role not found for update',
-  ROLE_NOT_FOUND_DELETE: 'Role not found for deletion',
-  ROLE_NAME_REQUIRED: 'Role name is required',
-  ROLE_EXISTS: 'A role with this name already exists',
-  ROLE_IN_USE: 'Cannot delete role. Users are still assigned to this role',
-  SERVER_ERROR_FETCH: 'Server error fetching roles',
-  SERVER_ERROR_FETCH_SINGLE: 'Server error fetching role',
-  SERVER_ERROR_CREATE: 'Server error creating role',
-  SERVER_ERROR_UPDATE: 'Server error updating role',
-  SERVER_ERROR_DELETE: 'Server error deleting role'
-};
-
-const SUCCESS_MESSAGES = {
-  ROLE_CREATED: 'Role created successfully',
-  ROLE_UPDATED: 'Role updated successfully',
-  ROLE_DELETED: 'Role and all its associated menu permissions deleted successfully'
-};
+const httpStatus = require('../constants/httpStatus');
+const errorMessages = require('../constants/errorMessages');
+const apiMessages = require('../constants/apiMessages');
+const roleConstants = require('../constants/roleConstants');
+const errorHandler = require('../utils/errorHandler');
 
 exports.getAllRoles = async (req, res) => {
   try {
