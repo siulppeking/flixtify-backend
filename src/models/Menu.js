@@ -10,6 +10,14 @@
  */
 const mongoose = require('mongoose');
 
+// Menu field length constraints
+const MENU_FIELD_CONSTRAINTS = {
+  NAME_MIN: 2,
+  NAME_MAX: 100,
+  ICON_MAX: 50,
+  PATH_MAX: 255
+};
+
 /**
  * Valid menu item types
  * @type {string[]}
