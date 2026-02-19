@@ -10,6 +10,13 @@
  */
 const mongoose = require('mongoose');
 
+// Project field constraints
+const PROJECT_FIELD_CONSTRAINTS = {
+  NAME_MIN: 3,
+  NAME_MAX: 100,
+  DESCRIPTION_MAX: 1000
+};
+
 /**
  * Valid project status values
  * @type {string[]}
