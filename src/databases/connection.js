@@ -1,6 +1,27 @@
-// MongoDB Connection Module - Establishes and manages Mongoose database connection
+/**
+ * MongoDB Connection Module
+ * Establishes and manages Mongoose database connection
+ * Handles connection configuration, retries, and error reporting
+ */
 const mongoose = require('mongoose');
 const config = require('../config/environment');
+
+// Database connection status messages with emoji indicators
+const DB_MESSAGES = {
+  SUCCESS: '✅ MongoDB connection successful',
+  FAILED: '❌ MongoDB connection error:',
+  MISSING_URL: 'DATABASE_URL not defined in environment variables',
+  RETRYING: '🔄 Retrying database connection...',
+  MAX_RETRIES_REACHED: '❌ Maximum connection retries reached',
+  DISCONNECTED: '⚠️ MongoDB disconnected',
+  ERROR: 'MongoDB connection error:'
+};
+
+// Connection retry configuration
+const CONNECTION_RETRY = {
+  MAX_ATTEMPTS: 3,
+  DELAY_MS: 5000
+};
 
 // Connection configuration constants
 const CONNECTION_CONFIG = {
@@ -9,19 +30,6 @@ const CONNECTION_CONFIG = {
   socketTimeoutMS: 45000,
   serverSelectionTimeoutMS: 5000,
   retryWrites: true
-};
-
-const CONNECTION_MESSAGES = {
-  SUCCESS: '✅ MongoDB connection successful',
-  ERROR: '❌ MongoDB connection error:',
-  MISSING_URL: 'URL_MONGODB not defined in environment variables',
-  RETRYING: '🔄 Retrying connection...',
-  MAX_RETRIES: '❌ Maximum connection retries reached'
-};
-
-const CONNECTION_PARAMS = {
-  MAX_RETRIES: 3,
-  RETRY_DELAY_MS: 5000
 };
 
 /**
