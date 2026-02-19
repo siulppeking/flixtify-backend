@@ -12,11 +12,17 @@
 const Menu = require('../models/Menu');
 const RoleMenu = require('../models/RoleMenu');
 
-/**
- * Valid menu item types
- * @type {string[]}
- */
+// Menu type constants
 const MENU_TYPES = ['menu', 'submenu', 'form'];
+
+// Menu operation status codes  
+const MENU_STATUS_CODES = {
+  OK: 200,
+  CREATED: 201,
+  BAD_REQUEST: 400,
+  NOT_FOUND: 404,
+  INTERNAL_ERROR: 500
+};
 
 /**
  * Error messages for menu operations
@@ -27,7 +33,7 @@ const ERROR_MESSAGES = {
   MENU_NOT_FOUND_UPDATE: 'Menu item not found for update',
   MENU_NOT_FOUND_DELETE: 'Menu item not found for deletion',
   REQUIRED_FIELDS: 'Name, path, and type are required',
-  INVALID_TYPE: `Invalid menu type. Must be '${MENU_TYPES.join("', '")}'`,
+  INVALID_TYPE: `Invalid menu type. Must be one of: ${MENU_TYPES.join(', ')}`,
   PARENT_NOT_FOUND: 'Parent menu not found',
   SELF_PARENT: 'A menu item cannot be its own parent',
   PATH_UNIQUE: 'Path must be unique',
