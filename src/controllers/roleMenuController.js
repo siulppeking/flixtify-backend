@@ -13,6 +13,16 @@
 const Menu = require('../models/Menu');
 const Role = require('../models/Role');
 const RoleMenu = require('../models/RoleMenu');
+const mongoose = require('mongoose');
+
+// Role-menu operation status codes
+const ROLE_MENU_STATUS_CODES = {
+  OK: 200,
+  CREATED: 201,
+  BAD_REQUEST: 400,
+  NOT_FOUND: 404,
+  INTERNAL_ERROR: 500
+};
 
 /**
  * Error messages for role-menu assignment operations
