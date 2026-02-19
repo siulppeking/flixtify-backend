@@ -1,5 +1,10 @@
 const User = require('../models/User');
 const TwoFAMethod = require('../models/TwoFAMethod');
+const httpStatus = require('../constants/httpStatus');
+const errorMessages = require('../constants/errorMessages');
+const apiMessages = require('../constants/apiMessages');
+const dbFields = require('../constants/dbFields');
+const errorHandler = require('../utils/errorHandler');
 
 const USER_PROJECTION = '-password -twoFAVerifiedSession';
 
@@ -13,7 +18,7 @@ exports.createUser = async (req, res) => {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: 'User with this email already exists' });
+      return res.status(httpStatus.CONFLICT).json({ message: errorMessages.EMAIL_ALREADY_EXISTS });
     }
 
     const newUser = await User.create({
@@ -26,16 +31,13 @@ exports.createUser = async (req, res) => {
     const userResponse = newUser.toObject();
     delete userResponse.password;
 
-    res.status(201).json({
-      message: 'User registered successfully',
+    res.status(httpStatus.CREATED).json({
+      message: apiMessages.USER_MESSAGES.CREATED,
       user: userResponse
     });
   } catch (error) {
-    if (error.code === 11000) {
-      return res.status(400).json({ message: 'Username or email already in use' });
-    }
-    console.error('Error creating user:', error);
-    res.status(500).json({ message: 'Server error creating user' });
+    const errorResponse = errorHandler.handleControllerError(error, 'Error creating user');
+    errorHandler.sendErrorResponse(res, errorResponse);
   }
 };
 

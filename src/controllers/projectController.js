@@ -1,10 +1,40 @@
-// Project Controller - Handles project and task management operations
+/**
+ * Project Controller
+ * Handles project CRUD operations and project lifecycle management
+ * Manages create, read, update, delete operations authorized by project ownership
+ * @module controllers/projectController
+ */
+const mongoose = require('mongoose');
 const Project = require('../models/Project');
 const Task = require('../models/Task');
+const httpStatus = require('../constants/httpStatus');
+const errorMessages = require('../constants/errorMessages');
+const apiMessages = require('../constants/apiMessages');
+const dbFields = require('../constants/dbFields');
+const errorHandler = require('../utils/errorHandler');
 
-// Constants
-const ERROR_MESSAGES = {
-  PROJECT_NOT_FOUND: 'Project not found or access denied',
+// Database query projections for consistent field selection
+const PROJECT_QUERY_CONFIG = {
+  PROJECT_PROJECTION: '-__v',
+  TASK_PROJECTION: '-__v',
+  BASIC_FIELDS: '_id name description status startDate dueDate createdAt updatedAt',
+  OWNER_FIELDS: 'ownerId'
+};
+
+// Project operation response codes
+const PROJECT_OPERATIONS = {
+  CREATED_STATUS_CODE: 201,
+  SUCCESS_STATUS_CODE: 200,
+  DELETED_STATUS_CODE: 200
+};
+
+// Standardized project messages
+const PROJECT_MESSAGES = {
+  CREATED: 'Project created successfully',
+  UPDATED: 'Project updated successfully', 
+  DELETED: 'Project and associated tasks deleted successfully',
+  FETCHED: 'Projects retrieved successfully',
+  NOT_FOUND: 'Project not found or access denied',
   SERVER_ERROR_CREATE: 'Server error creating project',
   SERVER_ERROR_FETCH: 'Server error fetching projects',
   SERVER_ERROR_FETCH_SINGLE: 'Server error fetching project',
@@ -12,11 +42,8 @@ const ERROR_MESSAGES = {
   SERVER_ERROR_DELETE: 'Server error deleting project'
 };
 
-const SUCCESS_MESSAGES = {
-  PROJECT_CREATED: 'Project created successfully',
-  PROJECT_UPDATED: 'Project updated successfully',
-  PROJECT_DELETED: 'Project and associated tasks deleted successfully'
-};
+const PROJECT_PROJECTION = PROJECT_QUERY_CONFIG.PROJECT_PROJECTION;
+const TASK_PROJECTION = PROJECT_QUERY_CONFIG.TASK_PROJECTION;
 
 /**
  * Validates if a project belongs to the specified owner
@@ -47,13 +74,13 @@ exports.createProject = async (req, res) => {
       status,
       ownerId
     });
-    res.status(201).json({
-      message: SUCCESS_MESSAGES.PROJECT_CREATED,
+    res.status(PROJECT_OPERATIONS.CREATED_STATUS_CODE).json({
+      message: PROJECT_MESSAGES.CREATED,
       project: newProject
     });
   } catch (error) {
     console.error('Error creating project:', error);
-    res.status(500).json({ message: ERROR_MESSAGES.SERVER_ERROR_CREATE });
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: PROJECT_MESSAGES.SERVER_ERROR_CREATE });
   }
 };
 

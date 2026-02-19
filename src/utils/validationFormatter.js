@@ -1,11 +1,19 @@
 /**
  * Validation Error Formatter Utility
  * Standardizes validation error response formatting across the API
+ * Provides consistent error structure and messaging for validation failures
  */
 
 // Format validation errors into consistent response structure
 
 const httpStatus = require('../constants/httpStatus');
+
+// Validation error response configuration
+const VALIDATION_ERROR_CONFIG = {
+  ERROR_STATUS: 400,
+  ERROR_MESSAGE: 'Validation failed',
+  ERROR_TIMESTAMP_FORMAT: 'ISO'
+};
 
 /**
  * Format validation errors from express-validator

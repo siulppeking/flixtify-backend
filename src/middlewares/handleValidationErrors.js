@@ -1,10 +1,20 @@
-// Validation Error Handler Middleware - Catches and formats validation errors from express-validator
+/**
+ * Validation Error Handler Middleware
+ * Catches and formats validation errors from express-validator
+ * Provides consistent error response formatting across API
+ */
 const { validationResult } = require('express-validator');
+
+// Validation response configuration
+const VALIDATION_CONFIG = {
+  ERROR_STATUS_CODE: 400,
+  ERROR_MESSAGE: 'Validation failed'
+};
 
 // Constants for validation response
 const VALIDATION_RESPONSE = {
-  STATUS: 400,
-  MESSAGE: 'Validation failed'
+  STATUS: VALIDATION_CONFIG.ERROR_STATUS_CODE,
+  MESSAGE: VALIDATION_CONFIG.ERROR_MESSAGE
 };
 
 /**

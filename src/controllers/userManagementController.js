@@ -1,6 +1,16 @@
 // User Management Controller - Manages user CRUD operations and user-role associations
 const User = require('../models/User');
 const UserRole = require('../models/UserRole');
+const mongoose = require('mongoose');
+
+// User management operation status codes
+const USER_MGMT_STATUS_CODES = {
+  OK: 200,
+  CREATED: 201,
+  BAD_REQUEST: 400,
+  NOT_FOUND: 404,
+  INTERNAL_ERROR: 500
+};
 
 // Constants
 const USER_PROJECTION = '-password -twoFA.secret';

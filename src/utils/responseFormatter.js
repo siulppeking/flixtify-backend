@@ -1,7 +1,15 @@
 /**
  * Response Formatter Utility
  * Standardizes API response formatting across all endpoints
+ * Provides consistent HTTP response structure with status, message, and data
  */
+
+// HTTP status codes for responses
+const RESPONSE_STATUS_CODES = {
+  OK: 200,
+  CREATED: 201,
+  INTERNAL_ERROR: 500
+};
 
 // Helper functions for consistent HTTP response formatting
 
