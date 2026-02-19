@@ -13,11 +13,22 @@
 const Role = require('../models/Role');
 const UserRole = require('../models/UserRole');
 const RoleMenu = require('../models/RoleMenu');
+const mongoose = require('mongoose');
 const httpStatus = require('../constants/httpStatus');
 const errorMessages = require('../constants/errorMessages');
 const apiMessages = require('../constants/apiMessages');
 const roleConstants = require('../constants/roleConstants');
 const errorHandler = require('../utils/errorHandler');
+
+// Role operation response status codes
+const ROLE_STATUS_CODES = {
+  OK: 200,
+  CREATED: 201,
+  BAD_REQUEST: 400,
+  NOT_FOUND: 404,
+  CONFLICT: 409,
+  INTERNAL_ERROR: 500
+};
 
 exports.getAllRoles = async (req, res) => {
   try {
