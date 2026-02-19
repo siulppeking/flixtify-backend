@@ -2,14 +2,24 @@
  * Environment Configuration Constants
  * Centralized environment variables with defaults and validation
  * Manages all configuration settings from .env and defaults
+ * @module config/environment
  */
+
+// Environment configuration constants
+const ENV_CONFIG = {
+  NODE_ENV: process.env.NODE_ENV || 'development',
+  IS_DEVELOPMENT: (process.env.NODE_ENV || 'development') === 'development',
+  IS_PRODUCTION: process.env.NODE_ENV === 'production'
+};
 
 module.exports = {
   // Server configuration - Express server and environment settings
   SERVER: {
     PORT: process.env.PORT || 3000,
-    NODE_ENV: process.env.NODE_ENV || 'development',
-    HOST: process.env.HOST || 'localhost'
+    NODE_ENV: ENV_CONFIG.NODE_ENV,
+    HOST: process.env.HOST || 'localhost',
+    IS_DEV: ENV_CONFIG.IS_DEVELOPMENT,
+    IS_PROD: ENV_CONFIG.IS_PRODUCTION
   },
 
   // Database configuration - MongoDB connection and timeouts
