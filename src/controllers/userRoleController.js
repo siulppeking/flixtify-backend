@@ -13,6 +13,16 @@
 const Role = require('../models/Role');
 const User = require('../models/User');
 const UserRole = require('../models/UserRole');
+const mongoose = require('mongoose');
+
+// User-role operation status codes
+const USER_ROLE_STATUS_CODES = {
+  OK: 200,
+  CREATED: 201,
+  BAD_REQUEST: 400,
+  NOT_FOUND: 404,
+  INTERNAL_ERROR: 500
+};
 
 /**
  * Error messages for user-role assignment operations
